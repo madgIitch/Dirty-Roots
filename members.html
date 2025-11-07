@@ -527,173 +527,438 @@
   </svg>
 </div></div></div></div></div></div></div></div>
 
-<style>
-  /* Overlay meditativo */
-  .quiet-reading-overlay{
-    position:fixed;inset:0;background:radial-gradient(circle at 30% 30%,#0e160e 0%,#050705 80%);
-    color:#e5e7e2;display:none;opacity:0;transition:opacity 600ms;z-index:9999;padding:6vh 8vw;
-    font-family:"Georgia","Spectral",serif;line-height:1.65;letter-spacing:.2px;overflow-y:auto
-  }
-  .quiet-reading-overlay.active{display:block;opacity:1;animation:breathe 14s ease-in-out infinite}
-  .quiet-reading-text{max-width:700px;margin:0 auto;font-size:1.15rem}
-  .quiet-reading-text h2{font-size:2rem;margin:0 0 1rem;color:#a4cb3e}
-  .quiet-exit{
-    position:fixed;top:24px;right:24px;background:#ff60a8;color:#0b0b0b;border:none;border-radius:999px;
-    padding:10px 18px;font:700 14px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 0 12px #ff60a833
-  }
-  @keyframes breathe{0%,100%{background-color:#050705}50%{background-color:#0b130b}}
-  @keyframes fadeInText{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-  .quiet-reading-text p{animation:fadeInText 1.2s ease forwards}
-
-  /* Ocultar el vídeo sin cortar la reproducción */
-  .quiet-hidden-media{
-    position:fixed !important;left:-99999px !important;top:-99999px !important;
-    width:1px !important;height:1px !important;opacity:.001 !important;pointer-events:none !important;
-  }
+<style>  
+  /* Overlay meditativo */  
+  .quiet-reading-overlay{  
+    position:fixed;  
+    inset:0;  
+    background:radial-gradient(circle at 30% 30%,#0e160e 0%,#050705 80%);  
+    color:#e5e7e2;  
+    display:none;  
+    opacity:0;  
+    transition:opacity 600ms;  
+    z-index:9999;  
+    font-family:"Georgia","Spectral",serif;  
+    line-height:1.65;  
+    letter-spacing:.2px;  
+    overflow-y:auto;  
+    /* Centrado vertical y horizontal */  
+    display:flex;  
+    align-items:center;  
+    justify-content:center;  
+    padding:2rem;  
+  }  
+    
+  .quiet-reading-overlay.active{  
+    display:flex;  
+    opacity:1;  
+    animation:breathe 14s ease-in-out infinite;  
+  }  
+    
+  .quiet-reading-text{  
+    max-width:700px;  
+    width:100%;  
+    font-size:1.15rem;  
+    text-align:center;  
+  }  
+    
+  .quiet-reading-text h2{  
+    font-size:2rem;  
+    margin:0 0 1rem;  
+    color:#a4cb3e;  
+  }  
+    
+  /* Cita rotativa con transición suave */  
+  .rotating-quote{  
+    transition: opacity 600ms ease-in-out;  
+    min-height: 3rem;  
+  }  
+    
+  /* Control de volumen */  
+  .volume-control{  
+    margin-top: 2rem;  
+    padding: 1.5rem;  
+    background: rgba(255,255,255,0.03);  
+    border-radius: 12px;  
+    border: 1px solid rgba(255,255,255,0.08);  
+  }  
+    
+  .volume-control label{  
+    display: flex;  
+    align-items: center;  
+    justify-content: center;  
+    gap: 8px;  
+    font-size: 0.9rem;  
+    color: #b6b9bf;  
+    margin-bottom: 12px;  
+  }  
+    
+  .volume-slider{  
+    width: 100%;  
+    height: 6px;  
+    border-radius: 3px;  
+    background: rgba(255,255,255,0.1);  
+    outline: none;  
+    -webkit-appearance: none;  
+    appearance: none;  
+  }  
+    
+  .volume-slider::-webkit-slider-thumb{  
+    -webkit-appearance: none;  
+    appearance: none;  
+    width: 18px;  
+    height: 18px;  
+    border-radius: 50%;  
+    background: #a4cb3e;  
+    cursor: pointer;  
+    box-shadow: 0 0 8px rgba(164,203,62,0.4);  
+  }  
+    
+  .volume-slider::-moz-range-thumb{  
+    width: 18px;  
+    height: 18px;  
+    border-radius: 50%;  
+    background: #a4cb3e;  
+    cursor: pointer;  
+    border: none;  
+    box-shadow: 0 0 8px rgba(164,203,62,0.4);  
+  }  
+    
+  .volume-value{  
+    display: block;  
+    margin-top: 8px;  
+    font-size: 0.85rem;  
+    color: #e5e7eb;  
+    font-weight: 600;  
+    text-align: center;  
+  }  
+    
+  /* Botón de salida */  
+  .quiet-exit{  
+    position:fixed;  
+    top:24px;  
+    right:24px;  
+    background:#ff60a8;  
+    color:#0b0b0b;  
+    border:none;  
+    border-radius:999px;  
+    padding:10px 18px;  
+    font:700 14px/1 system-ui,sans-serif;  
+    cursor:pointer;  
+    box-shadow:0 0 12px #ff60a833;  
+  }  
+    
+  /* Animaciones */  
+  @keyframes breathe{  
+    0%,100%{background-color:#050705}  
+    50%{background-color:#0b130b}  
+  }  
+    
+  @keyframes fadeInText{  
+    from{opacity:0;transform:translateY(10px)}  
+    to{opacity:1;transform:translateY(0)}  
+  }  
+    
+  .quiet-reading-text p{  
+    animation:fadeInText 1.2s ease forwards;  
+  }  
+    
+  /* Ocultar el vídeo sin cortar la reproducción */  
+  .quiet-hidden-media{  
+    position:fixed !important;  
+    left:-99999px !important;  
+    top:-99999px !important;  
+    width:1px !important;  
+    height:1px !important;  
+    opacity:.001 !important;  
+    pointer-events:none !important;  
+  }  
 </style>
 
-<script>
-(function(){
-  const btn = document.getElementById('enter-quiet-mode');
-  let overlay, videoEl, savedState=null, fadeTimer=null;
-
-  // --- Helpers ---
-  function findSquarespaceVideo(){
-    return (
-      document.querySelector('.native-video-player .plyr__video-wrapper video') ||
-      document.querySelector('.plyr__video-wrapper video') ||
-      document.querySelector('.native-video-player video') ||
-      document.querySelector('video')
-    );
-  }
-
-  function waitForVideo(timeoutMs=5000){
-    return new Promise(resolve=>{
-      const first = findSquarespaceVideo();
-      if (first) return resolve(first);
-      const t0 = Date.now();
-      const iv = setInterval(()=>{
-        const v = findSquarespaceVideo();
-        if (v){ clearInterval(iv); resolve(v); }
-        else if (Date.now()-t0 > timeoutMs){ clearInterval(iv); resolve(null); }
-      },120);
-      // MutationObserver por si Plyr inyecta más tarde
-      const mo = new MutationObserver(()=>{
-        const v = findSquarespaceVideo();
-        if (v){ mo.disconnect(); clearInterval(iv); resolve(v); }
-      });
-      mo.observe(document.documentElement,{childList:true,subtree:true});
-    });
-  }
-
-  function createOverlay(){
-    if (overlay) return overlay;
-    overlay = document.createElement('div');
-    overlay.className = 'quiet-reading-overlay';
-    overlay.innerHTML = `
-      <button class="quiet-exit" aria-label="Exit Quiet Mode">Exit</button>
-      <div class="quiet-reading-text">
-        <h2>“Let the words breathe.”</h2>
-        <p>Bienvenido a Quiet Mode. Un espacio para leer sin prisa, con una pista sonora suave de fondo.</p>
-        <p>Respira, deja que el texto haga su trabajo. Cuando quieras salir, pulsa <strong>Exit</strong> o <strong>ESC</strong>.</p>
-      </div>`;
-    overlay.querySelector('.quiet-exit').addEventListener('click', exitQuietMode);
-    document.body.appendChild(overlay);
-    return overlay;
-  }
-
-  function rememberState(v){
-    if (savedState) return;
-    savedState = {
-      muted: v.muted,
-      loop: v.loop,
-      controls: v.controls,
-      volume: v.volume,
-      style: v.getAttribute('style'),
-      className: v.className,
-      wasPaused: v.paused
-    };
-  }
-
-  function restoreState(v){
-    if (!savedState) return;
-    try{
-      v.muted   = savedState.muted;
-      v.loop    = savedState.loop;
-      v.controls= savedState.controls;
-      v.volume  = savedState.volume;
-      if (savedState.style !== null) v.setAttribute('style', savedState.style); else v.removeAttribute('style');
-      v.className = savedState.className;
-      if (savedState.wasPaused) v.pause();
-    }catch(_){}
-    savedState = null;
-  }
-
-  function fadeInVolume(v, target=0.35, step=0.05, interval=160){
-    clearInterval(fadeTimer);
-    if (!v) return;
-    try { v.volume = 0.0; } catch(_){ return; }
-    fadeTimer = setInterval(()=>{
-      if (!v) return clearInterval(fadeTimer);
-      let next = (v.volume || 0) + step;
-      if (next >= target){ next = target; clearInterval(fadeTimer); }
-      try { v.volume = next; } catch(_){ clearInterval(fadeTimer); }
-    }, interval);
-  }
-
-  async function enterQuietMode(){
-    btn.disabled = true;
-
-    // 1) Asegura que tenemos el <video> real de Squarespace
-    videoEl = findSquarespaceVideo() || await waitForVideo();
-    if (!videoEl){
-      console.warn('[Quiet Mode] No se encontró <video> en la página.');
-      btn.disabled = false;
-      return;
-    }
-
-    // 2) Overlay activo
-    createOverlay().classList.add('active');
-    document.body.style.overflow = 'hidden';
-
-    // 3) Guardar estado y preparar audio-only
-    rememberState(videoEl);
-    videoEl.setAttribute('playsinline',''); videoEl.setAttribute('webkit-playsinline','');
-    videoEl.loop = true;
-    videoEl.muted = false;
-    videoEl.controls = false;
-    videoEl.classList.add('quiet-hidden-media'); // ⟵ oculto pero sigue sonando
-
-    // 4) Sincroniza con Plyr si existe y reproduce
-    try{
-      const plyrRoot = videoEl.closest('.plyr');
-      const plyrPlay = plyrRoot?.querySelector('[data-plyr="play"]');
-      if (plyrPlay){ try{ plyrPlay.click(); }catch(_){ } }
-      const p = videoEl.play();
-      if (p && p.catch) await p.catch(()=>{});
-      fadeInVolume(videoEl, 0.35);
-    }catch(e){
-      console.warn('[Quiet Mode] play() bloqueado o falló:', e);
-    }finally{
-      btn.disabled = false;
-    }
-  }
-
-  function exitQuietMode(){
-    if (overlay){ overlay.classList.remove('active'); setTimeout(()=>overlay?.remove(), 400); overlay = null; }
-    document.body.style.overflow = '';
-    clearInterval(fadeTimer);
-    if (videoEl){
-      try{ videoEl.pause(); }catch(_){}
-      videoEl.classList.remove('quiet-hidden-media');
-      restoreState(videoEl);
-      videoEl = null;
-    }
-  }
-
-  btn.addEventListener('click', enterQuietMode);
-  document.addEventListener('keydown', e=>{
-    if (e.key === 'Escape' && overlay?.classList.contains('active')) exitQuietMode();
-  });
-})();
+<script>  
+(function(){  
+  const btn = document.getElementById('enter-quiet-mode');  
+  let overlay, videoEl, savedState=null, fadeTimer=null, quoteInterval=null;  
+    
+  // Citas LITFA rotativas  
+  const litfaQuotes = [  
+    "Less is not only more—it’s everything.", 
+    "Embracing the power of calm inaction.", 
+    "Desire doesn’t need to be acted upon to be felt.", 
+    "You set the scene and then wait.", 
+    "We do not grow plants; we give them space to grow themselves.", 
+    "You’re learning to listen, not to control.", 
+    "Rushing nature only makes her retreat.", 
+    "Let this be a slow and deliberate process, not a stressful one.", 
+    "Give them what they need, then stand back and watch what happens.", 
+    "By learning to leave them alone, you learn to leave yourself alone, and that is when the true growth happens.",
+    "Who knew inner peace was hiding in that neglected ficus in the corner?", 
+    "The true core of this book is centered around the idea that our 'doing' something can often cause more harm than good.", 
+    "I let anxiety make my decisions instead of my excitement and curiosity.", 
+    "It’s about taking your plant fears, worries, and stresses and turning them into the plant mastery.", 
+    "You’ll see those little care cards and just ignore them or laugh.", 
+    "Observing is not the same as seeing.", 
+    "This isn’t about control. It’s about trust.", 
+    "If anything, these are the scars that make many plants a little more interesting.", 
+    "You need to sit back and watch her handle herself.", 
+    "We approach plant care with the understanding that we are stewards of the planet, not masters over it.",
+    "When you let go, when you allow nature to do what it’s been doing for billions of years, you not only grow healthier plants—you grow as a person.", 
+    "less is not only more—it’s everything.", 
+    "The true core of this book is centered around the idea that our 'doing' something can often cause more harm than good.", 
+    "Keep in mind that this is a mental game more than anything else.", 
+    "The plants teach me this every day: desire doesn't need to be acted upon to be felt.", 
+    "You set the scene and then wait.", 
+    "You're learning to listen, not to control.", 
+    "Let this be a slow and deliberate process, not a stressful one.", 
+    "I would rather lose all of my plants than have them turn into a source of stress and obligation.", 
+    "If anything, these are the scars that make many plants a little more interesting.", 
+    "If you take some time to observe instead of react you’ll find reaction is never the right answer when it comes to plants.", 
+    "You need to sit back and watch her handle herself.", "We are slow to intervene and quick to observe."
+  ];  
+  let currentQuoteIndex = 0;  
+  
+  // --- Persistencia de preferencias ---  
+  function loadPreferences(){  
+    try {  
+      const saved = localStorage.getItem('quietModePrefs');  
+      return saved ? JSON.parse(saved) : { volume: 0.35, lastQuote: 0 };  
+    } catch(_) {  
+      return { volume: 0.35, lastQuote: 0 };  
+    }  
+  }  
+  
+  function savePreferences(volume){  
+    try {  
+      localStorage.setItem('quietModePrefs', JSON.stringify({  
+        volume: volume,  
+        lastQuote: currentQuoteIndex,  
+        lastUsed: Date.now()  
+      }));  
+    } catch(_) {}  
+  }  
+  
+  // --- Helpers ---  
+  function findSquarespaceVideo(){  
+    return (  
+      document.querySelector('.native-video-player .plyr__video-wrapper video') ||  
+      document.querySelector('.plyr__video-wrapper video') ||  
+      document.querySelector('.native-video-player video') ||  
+      document.querySelector('video')  
+    );  
+  }  
+  
+  function waitForVideo(timeoutMs=5000){  
+    return new Promise(resolve=>{  
+      const first = findSquarespaceVideo();  
+      if (first) return resolve(first);  
+        
+      const timeout = setTimeout(() => {  
+        mo.disconnect();  
+        resolve(null);  
+      }, timeoutMs);  
+        
+      const mo = new MutationObserver(()=>{  
+        const v = findSquarespaceVideo();  
+        if (v){   
+          mo.disconnect();   
+          clearTimeout(timeout);  
+          resolve(v);   
+        }  
+      });  
+      mo.observe(document.documentElement,{childList:true,subtree:true});  
+    });  
+  }  
+  
+  function rotateQuote(){  
+    const quoteEl = overlay?.querySelector('.rotating-quote');  
+    if (!quoteEl) return;  
+      
+    quoteEl.style.opacity = '0';  
+    setTimeout(() => {  
+      currentQuoteIndex = (currentQuoteIndex + 1) % litfaQuotes.length;  
+      quoteEl.textContent = `"${litfaQuotes[currentQuoteIndex]}"`;  
+      quoteEl.style.opacity = '1';  
+    }, 600);  
+  }  
+  
+  function createOverlay(){  
+    if (overlay) return overlay;  
+      
+    const prefs = loadPreferences();  
+    currentQuoteIndex = prefs.lastQuote || 0;  
+      
+    overlay = document.createElement('div');  
+    overlay.className = 'quiet-reading-overlay';  
+    overlay.innerHTML = `  
+      <button class="quiet-exit" aria-label="Exit Quiet Mode">Exit</button>  
+      <div class="quiet-reading-text">  
+        <h2 class="rotating-quote">"${litfaQuotes[currentQuoteIndex]}"</h2>  
+        <p>Welcome to Quiet Mode. A space to read without rushing, with soft background music playing.</p>  
+        <p>Breathe, let the text do its work. When you want to exit, press <strong>Exit</strong> or <strong>ESC</strong>.</p>  
+          
+        <div class="volume-control">  
+          <label for="quiet-volume-slider">  
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">  
+              <path d="m15,21l0,-18l-1,0l-8,5l-5,0l0,8l5,0l8,5l1,0zm-8,-6.5543l0,-4.89147l6,-3.75l0,12.39147l-6,-3.75zm-4,-4.4457l0,4l2,0l0,-4l-2,0z"/>  
+              <path d="m17,8c2.2091,0 4,1.79086 4,4c0,2.2091 -1.7909,4 -4,4l0,2c3.3137,0 6,-2.6863 6,-6c0,-3.31371 -2.6863,-6 -6,-6l0,2z"/>  
+            </svg>  
+            Volumen  
+          </label>  
+          <input type="range" id="quiet-volume-slider" class="volume-slider"   
+                 min="0" max="1" step="0.01" value="${prefs.volume}"   
+                 aria-label="Volume control">  
+          <span class="volume-value">${Math.round(prefs.volume * 100)}%</span>  
+        </div>  
+      </div>`;  
+      
+    const exitBtn = overlay.querySelector('.quiet-exit');  
+    const volumeSlider = overlay.querySelector('.volume-slider');  
+    const volumeValue = overlay.querySelector('.volume-value');  
+      
+    exitBtn.addEventListener('click', exitQuietMode);  
+      
+    volumeSlider.addEventListener('input', (e) => {  
+      const vol = parseFloat(e.target.value);  
+      volumeValue.textContent = `${Math.round(vol * 100)}%`;  
+      if (videoEl) {  
+        try { videoEl.volume = vol; } catch(_) {}  
+      }  
+      savePreferences(vol);  
+    });  
+      
+    document.body.appendChild(overlay);  
+      
+    // Rotar citas cada 20 segundos  
+    quoteInterval = setInterval(rotateQuote, 20000);  
+      
+    return overlay;  
+  }  
+  
+  function rememberState(v){  
+    if (savedState) return;  
+    savedState = {  
+      muted: v.muted,  
+      loop: v.loop,  
+      controls: v.controls,  
+      volume: v.volume,  
+      style: v.getAttribute('style'),  
+      className: v.className,  
+      wasPaused: v.paused  
+    };  
+  }  
+  
+  function restoreState(v){  
+    if (!savedState) return;  
+    try{  
+      v.muted   = savedState.muted;  
+      v.loop    = savedState.loop;  
+      v.controls= savedState.controls;  
+      v.volume  = savedState.volume;  
+      if (savedState.style !== null) v.setAttribute('style', savedState.style);   
+      else v.removeAttribute('style');  
+      v.className = savedState.className;  
+      if (savedState.wasPaused) v.pause();  
+    }catch(_){}  
+    savedState = null;  
+  }  
+  
+  function fadeInVolume(v, target, duration=2000){  
+    clearInterval(fadeTimer);  
+    if (!v) return;  
+      
+    const startTime = Date.now();  
+    const startVol = 0;  
+      
+    try { v.volume = startVol; } catch(_){ return; }  
+      
+    function animate() {  
+      const elapsed = Date.now() - startTime;  
+      const progress = Math.min(elapsed / duration, 1);  
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic  
+        
+      try {  
+        v.volume = startVol + (target - startVol) * eased;  
+        if (progress < 1) {  
+          fadeTimer = requestAnimationFrame(animate);  
+        }  
+      } catch(_) {}  
+    }  
+    animate();  
+  }  
+  
+  async function enterQuietMode(){  
+    btn.disabled = true;  
+  
+    // 1) Asegura que tenemos el <video> real de Squarespace  
+    videoEl = findSquarespaceVideo() || await waitForVideo();  
+    if (!videoEl){  
+      console.warn('[Quiet Mode] No se encontró <video> en la página.');  
+      btn.disabled = false;  
+      return;  
+    }  
+  
+    // 2) Overlay activo con preferencias cargadas  
+    const prefs = loadPreferences();  
+    createOverlay().classList.add('active');  
+    document.body.style.overflow = 'hidden';  
+  
+    // 3) Guardar estado y preparar audio-only  
+    rememberState(videoEl);  
+    videoEl.setAttribute('playsinline','');   
+    videoEl.setAttribute('webkit-playsinline','');  
+    videoEl.loop = true;  
+    videoEl.muted = false;  
+    videoEl.controls = false;  
+    videoEl.classList.add('quiet-hidden-media');  
+  
+    // 4) Sincroniza con Plyr si existe y reproduce  
+    try{  
+      const plyrRoot = videoEl.closest('.plyr');  
+      const plyrPlay = plyrRoot?.querySelector('[data-plyr="play"]');  
+      if (plyrPlay){ try{ plyrPlay.click(); }catch(_){ } }  
+        
+      const p = videoEl.play();  
+      if (p && p.catch) await p.catch(()=>{});  
+        
+      // Usar volumen guardado  
+      fadeInVolume(videoEl, prefs.volume);  
+    }catch(e){  
+      console.warn('[Quiet Mode] play() bloqueado o falló:', e);  
+    }finally{  
+      btn.disabled = false;  
+    }  
+  }  
+  
+  function exitQuietMode(){  
+    if (quoteInterval) {  
+      clearInterval(quoteInterval);  
+      quoteInterval = null;  
+    }  
+      
+    if (overlay){   
+      overlay.classList.remove('active');   
+      setTimeout(()=>overlay?.remove(), 400);   
+      overlay = null;   
+    }  
+      
+    document.body.style.overflow = '';  
+      
+    if (fadeTimer) {  
+      cancelAnimationFrame(fadeTimer);  
+      fadeTimer = null;  
+    }  
+      
+    if (videoEl){  
+      try{ videoEl.pause(); }catch(_){}  
+      videoEl.classList.remove('quiet-hidden-media');  
+      restoreState(videoEl);  
+      videoEl = null;  
+    }  
+  }  
+  
+  btn.addEventListener('click', enterQuietMode);  
+  document.addEventListener('keydown', e=>{  
+    if (e.key === 'Escape' && overlay?.classList.contains('active')) exitQuietMode();  
+  });  
+})();  
 </script>
