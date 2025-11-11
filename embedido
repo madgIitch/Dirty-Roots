@@ -1,0 +1,62 @@
+Bloque de inserción
+Agrega contenido multimedia externo a tu sitio con códigos de inserción.
+Última actualización: 10 de febrero de 2025
+
+Usa bloques de inserción para agregar contenido externo a tu sitio, como videos, tuits, publicaciones de Facebook y más.
+
+Para más información sobre cómo elegir el mejor bloque para tu contenido personalizado, visita Añadir código personalizado en tu sitio.
+
+Mira el video
+
+Antes de comenzar
+Los bloques de inserción obtienen contenidos de servicios que usan el estándar oEmbed o configuran manualmente el código de inserción. Para agregar otro código a tu sitio, usa Bloques de código.
+Puedes usar el bloque de inserción para mostrar videos con configuración de pantalla avanzada, reproducción automática habilitada o que estén alojados en Wistia, Animoto u otros alojamientos. Para la mayoría de los videos de YouTube y Vimeo, usa el bloque de video en su lugar. Para más detalles, visita Incrustar videos de servicios de terceros en tu sitio.
+Para la mayoría de los servicios de video, puedes editar el código de inserción para habilitar la reproducción automática. Para obtener más información, visita Reproducción automática de videos.
+Para obtener más información sobre el uso de un bloque de inserción para mostrar un feed de publicaciones de X en tu sitio, visita Usar X con Squarespace.
+Agregar un video a un bloque de inserción
+Para agregar un video a un bloque de inserción:
+
+Encuentra el código de inserción del video. La mayoría de los servicios de video tienen un botón Compartir o Insertar al lado. Haz clic en Compartir o en Insertar y luego copia el código de inserción proporcionado.
+En tu sitio de Squarespace, edita una página o publicación, haz clic en un punto de inserción y haz clic en Insertar. Para obtener ayuda, visita Cómo agregar contenido con bloques.
+Abre el editor de bloques presionando el ícono del lápiz en el bloque.
+Haz clic en Fragmento de código en una computadora (o Código en la aplicación de Squarespace), haz clic en Insertar datos y pega manualmente el código de inserción del video en el campo de texto.
+(Opcional) Sube una imagen destacada personalizada que se muestra hasta que el visitante haga clic para reproducir el video. Ten en cuenta que, al agregar una imagen, se desactiva la reproducción automática.
+(Opcional) Añade una descripción para mostrar el texto debajo del video.
+Nota
+
+Si el código de inserción no funciona, es posible que el host de video que usas no use el estándar oEmbed. Para este tipo de servicios, recomendamos colocar el código de inserción en un bloque de código.
+
+Agregar otro contenido a un bloque de inserción
+Para agregar otro contenido a un bloque de inserción:
+
+Edita una página o una publicación, haz clic en Agregar bloque o en un punto de inserción y, a continuación, haz clic en Insertar. Para obtener ayuda, visita Agregar contenido con bloques.
+Para abrir el editor de bloques, presiona el ícono del lápiz o Editar en el bloque.
+Ingresa la URL del elemento que estás insertando. Necesitarás una URL de un sitio que utilice el estándar Oembed.
+Si el contenido no aparece, haz clic en fragmento de código en el editor de bloques en una computadora (o en código en la aplicación de Squarespace), luego en Incrustar datos y pega un código de inserción manualmente en el campo de texto.
+Nota
+
+Los campos personalizados de imagen destacada y descripción son para inserciones de video. Si agregas una imagen destacada personalizada a otro contenido insertado, tu contenido no se mostrará.
+
+Solución de problemas
+Esta sección trata problemas específicos del bloque de inserción. Para solucionar problemas de videos incrustados en general, visita Agregar videos a tu sitio.
+
+Mensaje de error: Ingresa una URL o código para insertar válidos.
+Este mensaje aparece si se produce algún error con la URL o el código insertados. Para solucionar el problema:
+
+Abre el bloque de inserción.
+Agrega una URL o un código de inserción válidos.
+Cuando se inserta una URL o código válidos, aparecerá el mensaje "Ubicado correctamente" abajo.
+Si tu código de inserción sigue sin funcionar, te recomendamos comunicarte con el servicio de terceros que te proveyó el código para pedirles asistencia.
+
+No aparece el contenido insertado
+Como medida de seguridad, en ocasiones, el código o el contenido insertados no aparecen cuando has iniciado sesión. Si el código es válido, los que visitan el sitio deberían verlo. Para verificar que los que visitan el sitio pueden verlo, intenta cerrar la sesión en tu sitio y visitarlo o abrirlo en una ventana de incógnito.
+
+Si aún no puedes verlo, probablemente haya algún problema con el código. Te recomendamos comunicarte con el servicio de terceros que proporcionó el código para solicitar asistencia.
+
+Nota
+
+Las personalizaciones basadas en código están fuera del alcance de nuestro soporte. Esto significa que no podemos ayudarte más con la configuración o la solución de problemas. Además, con una solución basada en un código, no podemos garantizar su funcionamiento o la compatibilidad total con Squarespace. Esto incluye cómo funciona con nuestro diseño adaptable, en especial su aspecto en dispositivos móviles y sus funciones en todas las plantillas. Las personalizaciones basadas en código también pueden causar problemas de visualización, con futuras actualizaciones a nuestra plataforma. Aunque no podemos ayudarte más, hay muchos recursos que te pueden orientar en la dirección correcta:
+Infórmate sobre las mejores prácticas para agregar código personalizado.
+Lee nuestra guía general sobre las personalizaciones de basadas en código.
+Visita Squarespace Forum, nuestro foro para clientes y desarrolladores.
+Contrata a un Squarespace Expert para ayudar a crear código personalizado para tu sitio.
