@@ -5,13 +5,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";  
 import Image from "next/image";  
 import MapCanvas from "@/src/components/MapCanvas";  
-import { listLatestPlaces } from "@/src/lib/firestore";  
+import { listLatestPlaces, deletePlace } from "@/src/lib/firestore";  
 import { Place } from "@/src/types/place";  
   
 export default function PlacesPage() {  
   const [places, setPlaces] = useState<Place[]>([]);  
   const [loading, setLoading] = useState(true);  
-  
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: 50.0, lng: 10.0 });  
+  const [mapZoom, setMapZoom] = useState<number>(5);  
+    
   useEffect(() => {  
     (async () => {  
       try {  
@@ -25,6 +27,26 @@ export default function PlacesPage() {
     })();  
   }, []);  
   
+  const handlePlaceClick = (place: Place) => {  
+    setMapCenter({ lat: place.coords.lat, lng: place.coords.lng });  
+    setMapZoom(15);  
+  };  
+  
+  const handleDeletePlace = async (placeId: string) => {  
+    if (!confirm("¿Estás seguro de que quieres eliminar este lugar?")) {  
+      return;  
+    }  
+      
+    try {  
+      await deletePlace(placeId);  
+      setPlaces(places.filter(p => p.id !== placeId));  
+      alert("Lugar eliminado ✅");  
+    } catch (error) {  
+      console.error("Error eliminando lugar:", error);  
+      alert("Error al eliminar el lugar");  
+    }  
+  };  
+    
   if (loading) {  
     return (  
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0B0B0B' }}>  
@@ -35,7 +57,7 @@ export default function PlacesPage() {
       </div>  
     );  
   }  
-  
+    
   return (  
     <div style={{ minHeight: '100vh', background: '#0B0B0B', padding: '32px' }}>  
       {/* Header */}  
@@ -87,7 +109,7 @@ export default function PlacesPage() {
   
       {/* Main Content - Grid con mapa pequeño a la izquierda */}  
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>  
-        <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr', gap: '24px' }}>  
+        <div style={{ display: 'grid', gridTemplateColumns: '650px 1fr', gap: '24px' }}>  
           {/* Mapa - Columna izquierda pequeña */}  
           <div   
             style={{   
@@ -101,6 +123,8 @@ export default function PlacesPage() {
           >  
             <MapCanvas  
               height="500px"  
+              center={mapCenter}  
+              zoom={mapZoom}  
               markers={places.map(p => ({ id: p.id!, lat: p.coords.lat, lng: p.coords.lng }))}  
             />  
           </div>  
@@ -154,8 +178,10 @@ export default function PlacesPage() {
                       border: '1px solid #242424',  
                       background: '#0F0F0F',  
                       transition: 'all 0.2s',  
-                      cursor: 'pointer'  
+                      cursor: 'pointer',  
+                      position: 'relative'  
                     }}  
+                    onClick={() => handlePlaceClick(p)}  
                     onMouseEnter={(e) => {  
                       e.currentTarget.style.background = '#111111';  
                       e.currentTarget.style.borderColor = 'rgba(164, 203, 62, 0.3)';  
@@ -165,7 +191,40 @@ export default function PlacesPage() {
                       e.currentTarget.style.borderColor = '#242424';  
                     }}  
                   >  
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>  
+                    {/* Botón de eliminar */}  
+                    <button  
+                      onClick={(e) => {  
+                        e.stopPropagation();  
+                        handleDeletePlace(p.id!);  
+                      }}  
+                      style={{  
+                        position: 'absolute',  
+                        top: '16px',  
+                        right: '16px',  
+                        padding: '6px 12px',  
+                        borderRadius: '9999px',  
+                        background: '#FF60A8',  
+                        color: '#0B0B0B',  
+                        border: 'none',  
+                        cursor: 'pointer',  
+                        fontSize: '12px',  
+                        fontWeight: '600',  
+                        transition: 'all 0.2s',  
+                        zIndex: 10  
+                      }}  
+                      onMouseEnter={(e) => {  
+                        e.currentTarget.style.background = '#FF4090';  
+                        e.currentTarget.style.transform = 'scale(1.05)';  
+                      }}  
+                      onMouseLeave={(e) => {  
+                        e.currentTarget.style.background = '#FF60A8';  
+                        e.currentTarget.style.transform = 'scale(1)';  
+                      }}  
+                    >  
+                      🗑️ Eliminar  
+                    </button>  
+  
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px', paddingRight: '100px' }}>  
                       <div style={{ fontWeight: 'bold', fontSize: '20px', color: '#F5F5F5' }}>  
                         {p.name}  
                       </div>  

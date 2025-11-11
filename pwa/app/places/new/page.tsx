@@ -9,23 +9,50 @@ export default function NewPlacePage() {
   const router = useRouter();  
   
   return (  
-    <main className="min-h-screen p-4 max-w-4xl mx-auto">  
-      <div className="mb-6 flex items-center justify-between">  
-        <div>  
-          <h1 className="text-2xl font-semibold mb-2">Añadir lugar calmado</h1>  
-          <p className="text-sm opacity-70">  
-            Comparte un lugar tranquilo que hayas descubierto  
-          </p>  
+    <div style={{ minHeight: '100vh', background: '#0B0B0B', padding: '32px' }}>  
+      {/* Header */}  
+      <div style={{ maxWidth: '1400px', margin: '0 auto 32px auto' }}>  
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>  
+          <div>  
+            <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '8px', color: '#F5F5F5' }}>  
+              🌿 Añadir lugar calmado  
+            </h1>  
+            <p style={{ fontSize: '16px', color: '#B6B9BF' }}>  
+              Comparte un lugar tranquilo que hayas descubierto  
+            </p>  
+          </div>  
+          <Link   
+            href="/places"   
+            style={{   
+              padding: '10px 20px',   
+              borderRadius: '9999px',   
+              border: '1px solid #FF60A8',  
+              color: '#F5F5F5',  
+              fontWeight: '600',  
+              textDecoration: 'none',  
+              fontSize: '14px',  
+              transition: 'all 0.2s'  
+            }}  
+          >  
+            ← Volver  
+          </Link>  
         </div>  
-        <Link   
-          href="/places"   
-          className="px-4 py-2 rounded border opacity-70 hover:opacity-100 transition text-sm"  
-        >  
-          ← Volver  
-        </Link>  
       </div>  
-        
-      <PlaceForm />  
-    </main>  
+  
+      {/* Form Container */}  
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>  
+        <div   
+          style={{   
+            borderRadius: '24px',   
+            padding: '32px',  
+            border: '1px solid #242424',  
+            background: '#0F0F0F',  
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'  
+          }}  
+        >  
+          <PlaceForm />  
+        </div>  
+      </div>  
+    </div>  
   );  
 }

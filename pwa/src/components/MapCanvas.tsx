@@ -27,6 +27,7 @@ export default function MapCanvas({
   const markerRef = useRef<L.Marker | null>(null);  
   const listRef = useRef<L.Marker[]>([]);  
   
+  // Inicialización del mapa (solo una vez)  
   useEffect(() => {  
     if (!mapRef.current || instanceRef.current) return;  
   
@@ -72,6 +73,17 @@ export default function MapCanvas({
     };  
   }, []);  
   
+  // Actualizar centro del mapa cuando cambian las coordenadas  
+  useEffect(() => {  
+    const map = instanceRef.current;  
+    if (!map) return;  
+      
+    map.flyTo([center.lat, center.lng], zoom, {  
+      duration: 1.5  
+    });  
+  }, [center.lat, center.lng, zoom]);  
+  
+  // Renderizar marcadores de lugares  
   useEffect(() => {  
     const map = instanceRef.current;  
     if (!map) return;  
