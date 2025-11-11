@@ -23,3 +23,6 @@ Photoshop Files/
 /node_modules
 *.png
 /pwa/dist
+/pwa/.next
+/pwa/node_modules
+pwa/firebase-debug.log
