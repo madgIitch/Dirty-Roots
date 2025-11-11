@@ -6,20 +6,22 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { LatLng, toGeohash, geohashBoundsForRadius, distanceM } from "./geoutils";
+import { Place } from "@/src/types/place";  
 
-export type Place = {
-  id?: string;
-  name: string;
-  description?: string;
-  coords: { lat: number; lng: number };
-  geohash: string;
-  tags?: string[];
-  noiseLevel?: number; // 0-5
-  createdBy: string;
-  createdAt: Timestamp;
-  status?: "approved" | "pending";
+export type Place = {  
+  id?: string;  
+  name: string;  
+  city: string; // NUEVO  
+  description?: string;  
+  photo?: string | null; // NUEVO  
+  coords: { lat: number; lng: number };  
+  geohash: string;  
+  tags?: string[];  
+  noiseLevel?: number;  
+  createdBy: string;  
+  createdAt: Timestamp;  
+  status?: "approved" | "pending";  
 };
-
 export type Question = {
   id?: string;
   text: string;
