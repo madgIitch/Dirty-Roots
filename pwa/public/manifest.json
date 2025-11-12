@@ -13,38 +13,39 @@
   "categories": ["lifestyle", "social", "travel"],  
   "icons": [  
     {  
-      "src": "/icons/icon-72x72.png",  
+      "src": "/icons/android/android-launchericon-72-72.png",  
       "sizes": "72x72",  
       "type": "image/png",  
-      "purpose": "any maskable"  
-    },  
+      "purpose": "any"  
+    },
     {  
-      "src": "/icons/icon-72x72.png",  
+      "src": "/icons/android/android-launchericon-192-192.png",  
       "sizes": "192x192",  
       "type": "image/png",  
-      "purpose": "any maskable"  
+      "purpose": "any"  
     },  
     {  
-      "src": "/icons/icon-72x72.png",  
+      "src": "/icons/android/android-launchericon-512-512.png",  
       "sizes": "512x512",  
       "type": "image/png",  
-      "purpose": "any maskable"  
-    }
-  ],  
-  "screenshots": [  
-    {  
-      "src": "/screenshots/places-desktop.png",  
-      "sizes": "1280x720",  
-      "type": "image/png",  
-      "form_factor": "wide",  
-      "label": "Vista de lugares calmados en escritorio"  
+      "purpose": "any"  
     },  
     {  
-      "src": "/screenshots/places-mobile.png",  
-      "sizes": "750x1334",  
+      "src": "/icons/android/android-launchericon-192-192.png",  
+      "sizes": "192x192",  
       "type": "image/png",  
-      "form_factor": "narrow",  
-      "label": "Vista de lugares calmados en móvil"  
+      "purpose": "maskable"  
+    },  
+    {  
+      "src": "/icons/android/android-launchericon-512-512.png",  
+      "sizes": "512x512",  
+      "type": "image/png",  
+      "purpose": "maskable"  
+    },  
+    {  
+      "src": "/icons/ios/180.png",  
+      "sizes": "180x180",  
+      "type": "image/png"  
     }  
   ],  
   "shortcuts": [  
@@ -55,7 +56,7 @@
       "url": "/places",  
       "icons": [  
         {  
-          "src": "/icons/shortcut-places.png",  
+          "src": "/icons/android/android-launchericon-96-96.png",  
           "sizes": "96x96",  
           "type": "image/png"  
         }  
@@ -68,7 +69,7 @@
       "url": "/qa",  
       "icons": [  
         {  
-          "src": "/icons/shortcut-qa.png",  
+          "src": "/icons/android/android-launchericon-96-96.png",  
           "sizes": "96x96",  
           "type": "image/png"  
         }  
@@ -81,7 +82,7 @@
       "url": "/places/new",  
       "icons": [  
         {  
-          "src": "/icons/shortcut-add.png",  
+          "src": "/icons/android/android-launchericon-96-96.png",  
           "sizes": "96x96",  
           "type": "image/png"  
         }  

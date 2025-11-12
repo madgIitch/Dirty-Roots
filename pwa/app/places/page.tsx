@@ -4,10 +4,16 @@
 import { useEffect, useState } from "react";  
 import Link from "next/link";  
 import Image from "next/image";  
-import MapCanvas from "@/src/components/MapCanvas";  
+import dynamic from "next/dynamic"; 
 import { listLatestPlaces, deletePlace } from "@/src/lib/firestore";  
 import { Place } from "@/src/types/place";  
   
+// Importar MapCanvas dinámicamente para evitar SSR  
+const MapCanvas = dynamic(() => import("@/src/components/MapCanvas"), {  
+  ssr: false,  
+}); 
+
+
 export default function PlacesPage() {  
   const [places, setPlaces] = useState<Place[]>([]);  
   const [loading, setLoading] = useState(true);  
