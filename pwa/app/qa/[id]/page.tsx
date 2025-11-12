@@ -2,11 +2,13 @@
 "use client";  
   
 import { use, useEffect, useState } from "react";  
-import { getQuestion, setAnswer } from "@/src/lib/firestore";  
+import { getQuestion, setAnswer  } from "@/src/lib/firestore";  
 import { ensureAnonAuth, auth } from "@/src/lib/firebase";  
 import Link from "next/link";  
   
 export const dynamicParams = true;  
+
+
   
 export default function QuestionDetailPage({ params }: { params: Promise<{ id: string }> }) {  
   const { id } = use(params);  

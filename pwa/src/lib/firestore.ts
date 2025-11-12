@@ -1,9 +1,9 @@
 // src/lib/firestore.ts  
-import {  
-  collection, addDoc, serverTimestamp, Timestamp,  
-  query, orderBy, limit, getDocs, doc, getDoc,  
-  deleteDoc, updateDoc  
-} from "firebase/firestore";  
+import {    
+  collection, addDoc, serverTimestamp, Timestamp,    
+  query, orderBy, limit, getDocs, doc, getDoc,    
+  deleteDoc, updateDoc, startAt, endAt    
+} from "firebase/firestore"; 
 import { db } from "./firebase";  
 import { LatLng, toGeohash, geohashBoundsForRadius, distanceM } from "./geoutils";  
   

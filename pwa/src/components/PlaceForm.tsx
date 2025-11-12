@@ -9,12 +9,13 @@ import MapCanvas from "./MapCanvas";
 import { addPlace } from "@/src/lib/firestore";  
 import { ensureAnonAuth, auth } from "@/src/lib/firebase";  
   
-const schema = z.object({  
-  name: z.string().min(2),  
-  description: z.string().optional(),  
-  tags: z.string().optional(),  
-  noiseLevel: z.coerce.number().min(0).max(5).optional(),  
-});  
+const schema = z.object({    
+  name: z.string().min(2),    
+  city: z.string().min(2), // Añadir este campo  
+  description: z.string().optional(),    
+  tags: z.string().optional(),    
+  noiseLevel: z.coerce.number().min(0).max(5).optional(),    
+});
   
 type FormValues = z.infer<typeof schema>;  
   
@@ -67,14 +68,15 @@ export default function PlaceForm() {
     }  
     await ensureAnonAuth();  
     const uid = auth.currentUser?.uid || "anon";  
-    await addPlace({  
-      name: values.name,  
-      description: values.description || "",  
-      coords,  
-      tags: values.tags ? values.tags.split(",").map(t => t.trim()).filter(Boolean) : [],  
-      noiseLevel: values.noiseLevel ?? 0,  
-      createdBy: uid,  
-    });  
+    await addPlace({    
+      name: values.name,    
+      city: values.city, // Añadir esta línea  
+      description: values.description || "",    
+      coords,    
+      tags: values.tags ? values.tags.split(",").map(t => t.trim()).filter(Boolean) : [],    
+      noiseLevel: values.noiseLevel ?? 0,    
+      createdBy: uid,    
+    }); 
     reset();  
     setCoords(null);  
     setCoordsInput("");  
@@ -85,34 +87,33 @@ export default function PlaceForm() {
   return (  
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>  
       {/* Campo de coordenadas DMS */}  
-      <div>  
-        <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', color: '#F5F5F5', fontWeight: '600' }}>  
-          Coordenadas (formato: 52°31'12.0"N 13°24'18.0"E)  
-        </label>  
-        <input   
-          value={coordsInput}  
-          onChange={(e) => handleCoordsInput(e.target.value)}  
-          style={{   
-            width: '100%',   
-            borderRadius: '12px',   
-            border: parsedCoords ? '1px solid #A4CB3E' : '1px solid #2A2A2A',   
-            padding: '12px 16px',   
-            background: '#0B0B0B',  
-            color: '#F5F5F5',  
-            fontSize: '14px',  
-            outline: 'none',  
-            transition: 'all 0.2s'  
-          }}  
-          placeholder={`52°31'12.0"N 13°24'18.0"E`}
-          onFocus={(e) => e.currentTarget.style.borderColor = '#A4CB3E'}  
-          onBlur={(e) => e.currentTarget.style.borderColor = parsedCoords ? '#A4CB3E' : '#2A2A2A'}  
-        />  
-        {parsedCoords && (  
-          <p style={{ fontSize: '12px', color: '#A4CB3E', marginTop: '4px' }}>  
-            ✓ Coordenadas válidas: {parsedCoords.lat.toFixed(5)}, {parsedCoords.lng.toFixed(5)}  
-          </p>  
-        )}  
-      </div>  
+      <div>    
+        <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', color: '#F5F5F5', fontWeight: '600' }}>    
+          Ciudad    
+        </label>    
+        <input     
+          {...register("city")}     
+          style={{     
+            width: '100%',     
+            borderRadius: '12px',     
+            border: '1px solid #2A2A2A',     
+            padding: '12px 16px',     
+            background: '#0B0B0B',    
+            color: '#F5F5F5',    
+            fontSize: '14px',    
+            outline: 'none',    
+            transition: 'all 0.2s'    
+          }}    
+          placeholder="Berlín, Madrid, etc."    
+          onFocus={(e) => e.currentTarget.style.borderColor = '#A4CB3E'}    
+          onBlur={(e) => e.currentTarget.style.borderColor = '#2A2A2A'}    
+        />    
+        {formState.errors.city && (    
+          <p style={{ color: '#FF60A8', fontSize: '12px', marginTop: '4px' }}>    
+            {formState.errors.city.message}    
+          </p>    
+        )}    
+      </div>
   
       {/* Mapa */}  
       <MapCanvas   
