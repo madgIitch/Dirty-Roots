@@ -111,7 +111,7 @@ export default function AuthPage() {
                 outline: 'none',  
                 transition: 'all 0.2s'  
               }}  
-              placeholder="tu@email.com"  
+              placeholder="your@email.com"  
               onFocus={(e) => e.currentTarget.style.borderColor = '#A4CB3E'}  
               onBlur={(e) => e.currentTarget.style.borderColor = '#2A2A2A'}  
             />  
@@ -134,7 +134,7 @@ export default function AuthPage() {
               marginBottom: '8px',  
               color: '#F5F5F5'  
             }}>  
-              Contraseña  
+              Password  
             </label>  
             <input  
               type="password"  
