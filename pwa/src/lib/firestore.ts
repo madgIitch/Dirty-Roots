@@ -7,22 +7,23 @@ import {
 import { db } from "./firebase";  
 import { LatLng, toGeohash, geohashBoundsForRadius, distanceM } from "./geoutils";  
   
-export type Place = {  
-  id?: string;  
-  name: string;  
-  city: string;  
-  address?: string; // NUEVO: dirección de calle  
-  schedule?: string; // NUEVO: horario (ej: "9:00-18:00")  
-  placeType: "park" | "cafe"; // NUEVO: tipo de lugar  
-  description?: string;  
-  photo?: string | null;  
-  coords: { lat: number; lng: number };  
-  geohash: string;  
-  tags?: string[];  
-  createdBy: string;  
-  createdAt: Timestamp;  
-  status?: "approved" | "pending";  
-}; 
+export type Place = {    
+  id?: string;    
+  name: string;    
+  city: string;    
+  placeType?: "park" | "cafe"; // NUEVO campo  
+  address?: string; // NUEVO campo  
+  schedule?: string; // NUEVO campo  
+  description?: string;    
+  photo?: string | null;    
+  coords: { lat: number; lng: number };    
+  geohash: string;    
+  tags?: string[];    
+  // noiseLevel?: number; // ELIMINAR esta línea  
+  createdBy: string;    
+  createdAt: Timestamp;    
+  status?: "approved" | "pending";    
+};
   
 export type Question = {  
   id?: string;  
@@ -42,16 +43,16 @@ export type Answer = {
 };  
   
 // ---------- PLACES ----------  
-export async function addPlace(input: Omit<Place, "id" | "createdAt" | "geohash">) {  
-  const ref = collection(db, "places");  
-  const docRef = await addDoc(ref, {  
-    ...input,  
-    geohash: toGeohash(input.coords),  
-    createdAt: serverTimestamp(),  
-    status: "approved",  
-  });  
-  return docRef.id;  
-}  
+export async function addPlace(input: Omit<Place, "id" | "createdAt" | "geohash">) {    
+  const ref = collection(db, "places");    
+  const docRef = await addDoc(ref, {    
+    ...input,    
+    geohash: toGeohash(input.coords),    
+    createdAt: serverTimestamp(),    
+    status: "approved",    
+  });    
+  return docRef.id;    
+} 
   
 export async function listLatestPlaces(n = 50) {  
   const ref = collection(db, "places");  
