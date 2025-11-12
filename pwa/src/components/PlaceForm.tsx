@@ -5,10 +5,15 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";  
 import { z } from "zod";  
 import { zodResolver } from "@hookform/resolvers/zod";  
-import MapCanvas from "./MapCanvas";  
 import { addPlace } from "@/src/lib/firestore";  
 import { ensureAnonAuth, auth } from "@/src/lib/firebase";  
+import dynamic from "next/dynamic";  
   
+const MapCanvas = dynamic(() => import("./MapCanvas"), {  
+  ssr: false,  
+});  
+
+
 const schema = z.object({  
   name: z.string().min(2),  
   description: z.string().optional(),  
