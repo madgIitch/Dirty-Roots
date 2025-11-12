@@ -10,7 +10,7 @@ import { LatLng, toGeohash, geohashBoundsForRadius, distanceM } from "./geoutils
 export type Place = {  
   id?: string;  
   name: string;  
-  city: string;  
+  city?: string;  
   description?: string;  
   photo?: string | null;  
   coords: { lat: number; lng: number };  
