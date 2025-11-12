@@ -4,7 +4,7 @@ import { Timestamp } from "firebase/firestore";
 export interface Place {  
   id?: string;  
   name: string;  
-  city: string;  
+  city?: string;  
   description?: string;  
   photo?: string | null;  
   coords: { lat: number; lng: number };  
