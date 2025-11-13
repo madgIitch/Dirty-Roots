@@ -10,6 +10,8 @@ import {
   listSeatReservations   
 } from "@/src/lib/firestore";  
 import ProtectedRoute from "@/src/components/ProtectedRoute";  
+import { Timestamp } from "firebase/firestore";  
+
   
 export default function LiveSessionsPage() {  
   const router = useRouter();  
@@ -76,16 +78,15 @@ export default function LiveSessionsPage() {
     setSubmitting(true);  
     try {  
       const dateTime = new Date(`${date}T${time}`);  
-        
-      const { addLiveSession } = await import("@/src/lib/firestore");  
-      await addLiveSession({  
+  
+        await addLiveSession({  
         title: title.trim(),  
         description: description.trim(),  
-        date: dateTime,  
+        date: Timestamp.fromDate(dateTime),  // ✅ Convert Date to Timestamp  
         youtubeLink: youtubeLink.trim(),  
         createdBy: user.uid,  
         status: "upcoming"  
-      });  
+        });  
   
       // Reset form  
       setTitle("");  
