@@ -86,24 +86,24 @@ export default function EmbedQuestionsPage() {
     );        
   }        
         
-  return (        
-    <div style={{        
-      width: '100vw',        
-      height: '100vh',        
-      display: 'flex',        
-      background: '#0B0B0B',  
-      overflow: 'hidden'  
-    }}>        
-      <div style={{  
-        width: '100%',  
-        maxWidth: '1400px',  
-        margin: '0 auto',  
-        display: 'grid',  
-        gridTemplateColumns: '1fr 400px',  
-        gap: '32px',  
-        padding: '32px',  
-        height: '100%'  
-      }}>  
+  return (          
+  <div style={{          
+    width: '100%',          
+    height: '100%',  // Cambiar de '100vh' a '100%'  
+    display: 'flex',          
+    background: '#0B0B0B',    
+    overflow: 'hidden'    
+  }}>          
+    <div style={{    
+      width: '100%',    
+      maxWidth: '1400px',    
+      margin: '0 auto',    
+      display: 'grid',    
+      gridTemplateColumns: '1fr 400px',    
+      gap: '32px',    
+      padding: '32px',    
+      height: '100%'    
+    }}>  
         {/* Columna IZQUIERDA: Lista de preguntas */}  
         <div className="questions-scroll" style={{  
           height: '100%',  
