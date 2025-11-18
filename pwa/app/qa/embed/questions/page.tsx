@@ -33,7 +33,6 @@ export default function EmbedQuestionsPage() {
     try {  
       const allQuestions = await listQuestions(100);  
   
-      // Ordenar: preguntas respondidas primero, luego sin responder  
       const sorted = allQuestions.sort((a, b) => {  
         const aHasAnswer = !!(a.answer && a.answer.text);  
         const bHasAnswer = !!(b.answer && b.answer.text);  
@@ -53,7 +52,7 @@ export default function EmbedQuestionsPage() {
   
   function handleQuestionCreated(id: string) {  
     loadQuestions();  
-    setDrawerOpen(false); // Cerrar drawer después de enviar  
+    setDrawerOpen(false);  
   }  
   
   if (!mounted) {  
@@ -96,19 +95,21 @@ export default function EmbedQuestionsPage() {
       background: '#0B0B0B',  
       overflow: 'hidden'  
     }}>  
-      {/* Lista de preguntas a pantalla completa */}  
+      {/* Lista de preguntas */}  
       <div className="questions-scroll" style={{  
         width: '100%',  
         height: '100%',  
         overflowY: 'auto',  
-        padding: '32px',  
-        paddingBottom: '100px' // Espacio para el botón flotante  
+        padding: '16px',  
+        paddingBottom: '100px',  
+        boxSizing: 'border-box'  
       }}>  
         <h2 style={{  
-          fontSize: '28px',  
+          fontSize: '24px',  
           fontWeight: 'bold',  
-          marginBottom: '24px',  
-          color: '#F5F5F5'  
+          marginBottom: '20px',  
+          color: '#F5F5F5',  
+          wordBreak: 'break-word'  
         }}>  
           💬 Community Questions  
         </h2>  
@@ -132,22 +133,22 @@ export default function EmbedQuestionsPage() {
           </div>  
         ) : questions.length === 0 ? (  
           <div style={{  
-            borderRadius: '24px',  
-            padding: '40px',  
+            borderRadius: '16px',  
+            padding: '24px',  
             textAlign: 'center',  
             border: '1px solid #242424',  
             background: '#0F0F0F'  
           }}>  
-            <div style={{ fontSize: '56px', marginBottom: '24px' }}>💬</div>  
-            <p style={{ marginBottom: '16px', fontSize: '20px', color: '#B6B9BF' }}>  
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>💬</div>  
+            <p style={{ marginBottom: '12px', fontSize: '18px', color: '#B6B9BF' }}>  
               No questions yet.  
             </p>  
             <p style={{ fontSize: '14px', color: '#B6B9BF' }}>  
-              Be the first to ask a question using the button below.  
+              Be the first to ask a question.  
             </p>  
           </div>  
         ) : (  
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>  
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>  
             {questions.map(q => {  
               const hasAnswer = q.answer && q.answer.text;  
   
@@ -155,27 +156,31 @@ export default function EmbedQuestionsPage() {
                 <div  
                   key={q.id}  
                   style={{  
-                    borderRadius: '24px',  
-                    padding: '24px',  
+                    borderRadius: '16px',  
+                    padding: '16px',  
                     border: '1px solid #242424',  
                     background: '#0F0F0F',  
-                    transition: 'all 0.2s'  
-                  }}  
-                  onMouseEnter={(e) => {  
-                    e.currentTarget.style.background = '#111111';  
-                    e.currentTarget.style.borderColor = 'rgba(164, 203, 62, 0.3)';  
-                  }}  
-                  onMouseLeave={(e) => {  
-                    e.currentTarget.style.background = '#0F0F0F';  
-                    e.currentTarget.style.borderColor = '#242424';  
+                    transition: 'all 0.2s',  
+                    wordBreak: 'break-word',  
+                    overflowWrap: 'break-word'  
                   }}  
                 >  
                   <div style={{ marginBottom: '12px' }}>  
-                    <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#F5F5F5', marginBottom: '8px' }}>  
+                    <div style={{   
+                      fontWeight: 'bold',   
+                      fontSize: '16px',   
+                      color: '#F5F5F5',   
+                      marginBottom: '8px',  
+                      lineHeight: '1.4'  
+                    }}>  
                       {q.text}  
                     </div>  
                     {q.context && (  
-                      <div style={{ fontSize: '14px', color: '#B6B9BF', lineHeight: '1.5' }}>  
+                      <div style={{   
+                        fontSize: '14px',   
+                        color: '#B6B9BF',   
+                        lineHeight: '1.5'  
+                      }}>  
                         {q.context}  
                       </div>  
                     )}  
@@ -183,8 +188,8 @@ export default function EmbedQuestionsPage() {
   
                   {hasAnswer && (  
                     <div style={{  
-                      marginTop: '16px',  
-                      paddingTop: '16px',  
+                      marginTop: '12px',  
+                      paddingTop: '12px',  
                       borderTop: '1px solid #1F1F1F'  
                     }}>  
                       <div style={{  
@@ -217,7 +222,8 @@ export default function EmbedQuestionsPage() {
                                   color: '#A4CB3E',  
                                   background: 'rgba(164, 203, 62, 0.1)',  
                                   padding: '3px 8px',  
-                                  borderRadius: '9999px'  
+                                  borderRadius: '9999px',  
+                                  wordBreak: 'break-all'  
                                 }}  
                               >  
                                 {ref}  
@@ -235,7 +241,8 @@ export default function EmbedQuestionsPage() {
                     gap: '8px',  
                     paddingTop: '12px',  
                     marginTop: '12px',  
-                    borderTop: '1px solid #1F1F1F'  
+                    borderTop: '1px solid #1F1F1F',  
+                    flexWrap: 'wrap'  
                   }}>  
                     {hasAnswer ? (  
                       <span style={{  
@@ -266,13 +273,13 @@ export default function EmbedQuestionsPage() {
         )}  
       </div>  
   
-      {/* Botón flotante para abrir formulario */}  
+      {/* Botón flotante */}  
       <button  
         onClick={() => setDrawerOpen(!drawerOpen)}  
         style={{  
           position: 'fixed',  
-          bottom: '24px',  
-          right: '24px',  
+          bottom: '20px',  
+          right: '20px',  
           width: '56px',  
           height: '56px',  
           borderRadius: '50%',  
@@ -297,7 +304,7 @@ export default function EmbedQuestionsPage() {
         {drawerOpen ? '✕' : '💬'}  
       </button>  
   
-      {/* Overlay oscuro */}  
+      {/* Overlay */}  
       {drawerOpen && (  
         <div  
           onClick={() => setDrawerOpen(false)}  
@@ -322,43 +329,45 @@ export default function EmbedQuestionsPage() {
           bottom: 0,  
           left: 0,  
           width: '100%',  
-          maxHeight: '80vh',  
+          maxHeight: '85vh',  
           background: '#0F0F0F',  
-          borderTopLeftRadius: '24px',  
-          borderTopRightRadius: '24px',  
+          borderTopLeftRadius: '20px',  
+          borderTopRightRadius: '20px',  
           boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.5)',  
           transform: drawerOpen ? 'translateY(0)' : 'translateY(100%)',  
           transition: 'transform 0.3s ease-out',  
           zIndex: 1002,  
           overflowY: 'auto',  
-          padding: '24px'  
+          padding: '20px 16px',  
+          boxSizing: 'border-box'  
         }}  
       >  
-        {/* Handle visual */}  
+        {/* Handle */}  
         <div style={{  
           width: '40px',  
           height: '4px',  
           background: '#2A2A2A',  
           borderRadius: '2px',  
-          margin: '0 auto 20px',  
+          margin: '0 auto 16px',  
           cursor: 'pointer'  
         }} onClick={() => setDrawerOpen(false)} />  
   
         <h2 style={{  
-          fontSize: '24px',  
+          fontSize: '20px',  
           fontWeight: 'bold',  
-          marginBottom: '16px',  
+          marginBottom: '12px',  
           color: '#F5F5F5',  
-          margin: '0 0 16px 0'  
+          margin: '0 0 12px 0'  
         }}>  
           💬 Ask a Question  
         </h2>  
         <p style={{  
           fontSize: '14px',  
           color: '#B6B9BF',  
-          marginBottom: '24px'  
+          marginBottom: '20px',  
+          lineHeight: '1.5'  
         }}>  
-          Your question will appear in the list above. It will become public once it receives an answer.  
+          Your question will appear in the list above once answered.  
         </p>  
         <QuestionForm onCreated={handleQuestionCreated} />  
       </div>  
@@ -374,39 +383,29 @@ export default function EmbedQuestionsPage() {
         }  
   
         .questions-scroll::-webkit-scrollbar {  
-          width: 8px;  
+          width: 6px;  
         }  
   
         .questions-scroll::-webkit-scrollbar-track {  
           background: #0F0F0F;  
-          border-radius: 4px;  
         }  
   
         .questions-scroll::-webkit-scrollbar-thumb {  
           background: #2A2A2A;  
-          border-radius: 4px;  
-        }  
-  
-        .questions-scroll::-webkit-scrollbar-thumb:hover {  
-          background: #A4CB3E;  
+          border-radius: 3px;  
         }  
   
         .drawer-scroll::-webkit-scrollbar {  
-          width: 8px;  
+          width: 6px;  
         }  
   
         .drawer-scroll::-webkit-scrollbar-track {  
           background: #0F0F0F;  
-          border-radius: 4px;  
         }  
   
         .drawer-scroll::-webkit-scrollbar-thumb {  
           background: #2A2A2A;  
-          border-radius: 4px;  
-        }  
-  
-        .drawer-scroll::-webkit-scrollbar-thumb:hover {  
-          background: #A4CB3E;  
+          border-radius: 3px;  
         }  
       `}</style>  
     </div>  
