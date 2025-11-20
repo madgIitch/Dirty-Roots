@@ -75,17 +75,19 @@ export default function EmbedGrowSlowlyShopPage() {
   return (  
     <div style={{  
       width: '100%',  
-      minHeight: '100vh',  
+      height: '600px', // Altura fija para el iframe  
       background: '#0B0B0B',  
-      padding: '32px'  
+      padding: '32px',  
+      boxSizing: 'border-box',  
+      overflow: 'hidden'  
     }}>  
       {/* Header */}  
       <div style={{  
-        marginBottom: '40px',  
+        marginBottom: '24px',  
         textAlign: 'center'  
       }}>  
         <h1 style={{  
-          fontSize: '32px',  
+          fontSize: '28px',  
           fontWeight: 'bold',  
           color: '#F5F5F5',  
           marginBottom: '8px'  
@@ -93,14 +95,14 @@ export default function EmbedGrowSlowlyShopPage() {
           🛍️ Things that grow slowly shop  
         </h1>  
         <p style={{  
-          fontSize: '16px',  
+          fontSize: '14px',  
           color: '#B6B9BF'  
         }}>  
           Exclusive items for mindful living  
         </p>  
       </div>  
   
-      {/* Products Grid/Carousel */}  
+      {/* Products Carousel */}  
       {products.length === 0 ? (  
         <div style={{  
           textAlign: 'center',  
@@ -128,12 +130,19 @@ export default function EmbedGrowSlowlyShopPage() {
         <div   
           className="product-carousel-wrapper"  
           style={{  
-            alignSelf: 'stretch',  
-            paddingTop: '0.98px',  
-            justifyContent: 'center',  
-            alignItems: 'flex-start',  
+            width: '100%',  
+            maxWidth: '1200px',  
+            height: 'calc(100% - 100px)', // Altura restante después del header  
+            margin: '0 auto',  
+            display: 'flex',  
+            flexDirection: 'row',  
+            overflowX: 'auto',  
+            overflowY: 'hidden',  
+            scrollSnapType: 'x mandatory',  
+            WebkitOverflowScrolling: 'touch',  
             gap: '20px',  
-            display: 'inline-flex'  
+            padding: '10px',  
+            boxSizing: 'border-box'  
           }}  
         >  
           {products.map(product => (  
@@ -145,8 +154,10 @@ export default function EmbedGrowSlowlyShopPage() {
               className="product-card"  
               style={{  
                 textDecoration: 'none',  
-                width: '273px',  
-                alignSelf: 'stretch',  
+                flex: '0 0 280px', // Ancho fijo para forzar scroll horizontal  
+                minWidth: '280px',  
+                maxWidth: '280px',  
+                height: 'fit-content',  
                 padding: '1px',  
                 background: 'linear-gradient(180deg, #141414 0%, #0F0F0F 100%)',  
                 overflow: 'hidden',  
@@ -156,9 +167,10 @@ export default function EmbedGrowSlowlyShopPage() {
                 flexDirection: 'column',  
                 justifyContent: 'flex-start',  
                 alignItems: 'flex-start',  
-                display: 'inline-flex',  
+                display: 'flex',  
                 cursor: 'pointer',  
-                transition: 'transform 0.2s'  
+                transition: 'transform 0.2s',  
+                scrollSnapAlign: 'start'  
               }}  
               onMouseEnter={(e) => {  
                 e.currentTarget.style.transform = 'translateY(-4px)';  
@@ -172,7 +184,7 @@ export default function EmbedGrowSlowlyShopPage() {
                 className="Background"  
                 style={{  
                   alignSelf: 'stretch',  
-                  height: '338.75px',  
+                  height: '280px',  
                   background: product.imageBase64  
                     ? `url(${product.imageBase64}) center/cover no-repeat`  
                     : '#0B0B0B',  
@@ -306,40 +318,31 @@ export default function EmbedGrowSlowlyShopPage() {
           to { transform: rotate(360deg); }  
         }  
   
-        /* Estilos para móviles (carrusel horizontal) */  
+        /* Ocultar scrollbar en todos los navegadores */  
+        .product-carousel-wrapper::-webkit-scrollbar {  
+          display: none;  
+        }  
+          
+        .product-carousel-wrapper {  
+          -ms-overflow-style: none;  /* IE y Edge */  
+          scrollbar-width: none;  /* Firefox */  
+        }  
+  
+        /* Ajustes específicos para móvil */  
         @media (max-width: 768px) {  
-          /* Contenedor principal del carrusel */  
           .product-carousel-wrapper {  
-            display: flex !important;  
-            flex-direction: row !important;  
-            overflow-x: auto !important;  
-            overflow-y: hidden !important;  
-            scroll-snap-type: x mandatory !important;  
-            -webkit-overflow-scrolling: touch !important;  
+            padding: 10px 16px !important;  
             gap: 16px !important;  
-            padding: 0 16px !important;  
-            width: 100% !important;  
-            box-sizing: border-box !important;  
-            justify-content: flex-start !important;  
           }  
   
-          /* Ocultar scrollbar */  
-          .product-carousel-wrapper::-webkit-scrollbar {  
-            display: none;  
-          }  
-  
-          /* Tarjetas del carrusel */  
           .product-card {  
             flex: 0 0 calc(100% - 32px) !important;  
-            width: calc(100% - 32px) !important;  
-            min-width: 280px !important;  
-            max-width: 320px !important;  
-            scroll-snap-align: start !important;  
+            min-width: 260px !important;  
+            max-width: 300px !important;  
           }  
   
-          /* Ajustar altura de fondo */  
           .product-card .Background {  
-            height: 280px !important;  
+            height: 240px !important;  
           }  
         }  
       `}</style>  
