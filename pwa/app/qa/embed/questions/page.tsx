@@ -372,42 +372,36 @@ export default function EmbedQuestionsPage() {
         <QuestionForm onCreated={handleQuestionCreated} />  
       </div>  
   
-      <style jsx>{`  
-        @keyframes spin {  
-          to { transform: rotate(360deg); }  
+      <style jsx>{`    
+        @keyframes spin {    
+          to { transform: rotate(360deg); }    
+        }    
+        
+        @keyframes fadeIn {    
+          from { opacity: 0; }    
+          to { opacity: 1; }    
+        }    
+        
+        /* Ocultar scrollbar en .questions-scroll */  
+        .questions-scroll {  
+          scrollbar-width: none; /* Firefox */  
+          -ms-overflow-style: none; /* IE y Edge */  
         }  
-  
-        @keyframes fadeIn {  
-          from { opacity: 0; }  
-          to { opacity: 1; }  
+        
+        .questions-scroll::-webkit-scrollbar {    
+          display: none; /* Chrome, Safari, Opera */  
+        }    
+        
+        /* Ocultar scrollbar en .drawer-scroll */  
+        .drawer-scroll {  
+          scrollbar-width: none; /* Firefox */  
+          -ms-overflow-style: none; /* IE y Edge */  
         }  
-  
-        .questions-scroll::-webkit-scrollbar {  
-          width: 6px;  
-        }  
-  
-        .questions-scroll::-webkit-scrollbar-track {  
-          background: #0F0F0F;  
-        }  
-  
-        .questions-scroll::-webkit-scrollbar-thumb {  
-          background: #2A2A2A;  
-          border-radius: 3px;  
-        }  
-  
-        .drawer-scroll::-webkit-scrollbar {  
-          width: 6px;  
-        }  
-  
-        .drawer-scroll::-webkit-scrollbar-track {  
-          background: #0F0F0F;  
-        }  
-  
-        .drawer-scroll::-webkit-scrollbar-thumb {  
-          background: #2A2A2A;  
-          border-radius: 3px;  
-        }  
-      `}</style>  
+        
+        .drawer-scroll::-webkit-scrollbar {    
+          display: none; /* Chrome, Safari, Opera */  
+        }    
+      `}</style>
     </div>  
   );  
 }
