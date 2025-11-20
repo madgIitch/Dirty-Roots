@@ -390,6 +390,8 @@ export default function EmbedQuestionsPage() {
         
         .questions-scroll::-webkit-scrollbar {    
           display: none; /* Chrome, Safari, Opera */  
+          width: 0;  
+          height: 0;  
         }    
         
         /* Ocultar scrollbar en .drawer-scroll */  
@@ -400,6 +402,8 @@ export default function EmbedQuestionsPage() {
         
         .drawer-scroll::-webkit-scrollbar {    
           display: none; /* Chrome, Safari, Opera */  
+          width: 0;  
+          height: 0;  
         }    
       `}</style>
     </div>  
