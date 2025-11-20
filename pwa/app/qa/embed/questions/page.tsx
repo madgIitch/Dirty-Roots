@@ -373,40 +373,36 @@ export default function EmbedQuestionsPage() {
         <QuestionForm onCreated={handleQuestionCreated} />  
       </div>  
   
-      <style jsx>{`    
-        @keyframes spin {    
-          to { transform: rotate(360deg); }    
-        }    
-        
-        @keyframes fadeIn {    
-          from { opacity: 0; }    
-          to { opacity: 1; }    
-        }    
-        
-        /* Ocultar scrollbar en .questions-scroll */  
-        .questions-scroll {  
-          scrollbar-width: none !important; /* Firefox */  
-          -ms-overflow-style: none !important; /* IE y Edge */  
-        }  
-        
-        .questions-scroll::-webkit-scrollbar {    
-          display: none !important; /* Chrome, Safari, Opera */  
-          width: 0 !important;  
-          height: 0 !important;  
-        }    
-        
-        /* Ocultar scrollbar en .drawer-scroll */  
-        .drawer-scroll {  
-          scrollbar-width: none !important; /* Firefox */  
-          -ms-overflow-style: none !important; /* IE y Edge */  
-        }  
-        
-        .drawer-scroll::-webkit-scrollbar {    
-          display: none !important; /* Chrome, Safari, Opera */  
-          width: 0 !important;  
-          height: 0 !important;  
-        }    
-      `}</style>
+      <style jsx>{`  
+      @keyframes spin {  
+        to { transform: rotate(360deg); }  
+      }  
+      
+      @keyframes fadeIn {  
+        from { opacity: 0; }  
+        to { opacity: 1; }  
+      }  
+      
+      /* Ocultar scrollbar en .questions-scroll */  
+      .questions-scroll {  
+        scrollbar-width: none !important; /* Firefox */  
+        -ms-overflow-style: none !important; /* IE/Edge */  
+      }  
+      
+      .questions-scroll::-webkit-scrollbar {  
+        display: none !important; /* Chrome/Safari/Opera */  
+      }  
+      
+      /* Ocultar scrollbar en .drawer-scroll */  
+      .drawer-scroll {  
+        scrollbar-width: none !important; /* Firefox */  
+        -ms-overflow-style: none !important; /* IE/Edge */  
+      }  
+      
+      .drawer-scroll::-webkit-scrollbar {  
+        display: none !important; /* Chrome/Safari/Opera */  
+      }  
+    `}</style>
     </div>  
   );  
 }
