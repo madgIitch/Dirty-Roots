@@ -10,12 +10,10 @@ export default function EmbedGrowSlowlyShopPage() {
   const [products, setProducts] = useState<any[]>([]);  
   const [loading, setLoading] = useState(true);  
   
-  // Primer useEffect: marcar como montado  
   useEffect(() => {  
     setMounted(true);  
   }, []);  
   
-  // Segundo useEffect: cargar datos después de montar  
   useEffect(() => {  
     if (!mounted) return;  
   
@@ -43,8 +41,8 @@ export default function EmbedGrowSlowlyShopPage() {
   if (!mounted || loading) {  
     return (  
       <div style={{  
-        width: '100%',  
-        height: '100%',  
+        width: '100vw',  
+        height: '100vh',  
         display: 'flex',  
         alignItems: 'center',  
         justifyContent: 'center',  
@@ -74,66 +72,60 @@ export default function EmbedGrowSlowlyShopPage() {
   
   return (  
     <div style={{  
-      width: '100%',  
-      height: '600px', // Altura fija para el iframe  
+      width: '100vw',  
+      height: '100vh',  
+      position: 'relative',  
       background: '#0B0B0B',  
-      padding: '32px',  
-      boxSizing: 'border-box',  
       overflow: 'hidden'  
     }}>  
       {/* Header */}  
       <div style={{  
-        marginBottom: '24px',  
-        textAlign: 'center'  
+        padding: '20px',  
+        textAlign: 'center',  
+        borderBottom: '1px solid #242424'  
       }}>  
         <h1 style={{  
           fontSize: '28px',  
           fontWeight: 'bold',  
           color: '#F5F5F5',  
-          marginBottom: '8px'  
+          margin: '0 0 8px 0'  
         }}>  
           🛍️ Things that grow slowly shop  
         </h1>  
         <p style={{  
           fontSize: '14px',  
-          color: '#B6B9BF'  
+          color: '#B6B9BF',  
+          margin: 0  
         }}>  
           Exclusive items for mindful living  
         </p>  
       </div>  
   
-      {/* Products Carousel */}  
+      {/* Products carousel */}  
       {products.length === 0 ? (  
         <div style={{  
-          textAlign: 'center',  
-          padding: '60px 20px',  
-          background: '#0F0F0F',  
-          borderRadius: '24px',  
-          border: '1px solid #242424'  
+          display: 'flex',  
+          alignItems: 'center',  
+          justifyContent: 'center',  
+          height: 'calc(100% - 100px)',  
+          padding: '40px'  
         }}>  
-          <div style={{ fontSize: '64px', marginBottom: '16px' }}>🏪</div>  
-          <p style={{  
-            fontSize: '18px',  
-            color: '#B6B9BF',  
-            marginBottom: '8px'  
-          }}>  
-            No products available  
-          </p>  
-          <p style={{  
-            fontSize: '14px',  
-            color: '#757575'  
-          }}>  
-            Check back soon for new items  
-          </p>  
+          <div style={{ textAlign: 'center' }}>  
+            <div style={{ fontSize: '64px', marginBottom: '16px' }}>🛍️</div>  
+            <p style={{ fontSize: '18px', color: '#B6B9BF', marginBottom: '8px' }}>  
+              No products yet  
+            </p>  
+            <p style={{ fontSize: '14px', color: '#757575' }}>  
+              Check back soon for exclusive items  
+            </p>  
+          </div>  
         </div>  
       ) : (  
         <div   
           className="product-carousel-wrapper"  
           style={{  
             width: '100%',  
-            maxWidth: '1200px',  
-            height: 'calc(100% - 100px)', // Altura restante después del header  
-            margin: '0 auto',  
+            height: 'calc(100% - 100px)',  
             display: 'flex',  
             flexDirection: 'row',  
             overflowX: 'auto',  
@@ -141,8 +133,9 @@ export default function EmbedGrowSlowlyShopPage() {
             scrollSnapType: 'x mandatory',  
             WebkitOverflowScrolling: 'touch',  
             gap: '20px',  
-            padding: '10px',  
-            boxSizing: 'border-box'  
+            padding: '20px',  
+            boxSizing: 'border-box',  
+            alignItems: 'center'  
           }}  
         >  
           {products.map(product => (  
@@ -154,23 +147,19 @@ export default function EmbedGrowSlowlyShopPage() {
               className="product-card"  
               style={{  
                 textDecoration: 'none',  
-                flex: '0 0 280px', // Ancho fijo para forzar scroll horizontal  
+                flex: '0 0 280px',  
                 minWidth: '280px',  
                 maxWidth: '280px',  
-                height: 'fit-content',  
+                scrollSnapAlign: 'start',  
+                transition: 'transform 0.2s',  
                 padding: '1px',  
                 background: 'linear-gradient(180deg, #141414 0%, #0F0F0F 100%)',  
                 overflow: 'hidden',  
                 borderRadius: '18px',  
                 outline: '1px rgba(255, 255, 255, 0.08) solid',  
                 outlineOffset: '-1px',  
-                flexDirection: 'column',  
-                justifyContent: 'flex-start',  
-                alignItems: 'flex-start',  
                 display: 'flex',  
-                cursor: 'pointer',  
-                transition: 'transform 0.2s',  
-                scrollSnapAlign: 'start'  
+                flexDirection: 'column'  
               }}  
               onMouseEnter={(e) => {  
                 e.currentTarget.style.transform = 'translateY(-4px)';  
@@ -179,133 +168,62 @@ export default function EmbedGrowSlowlyShopPage() {
                 e.currentTarget.style.transform = 'translateY(0)';  
               }}  
             >  
-              {/* Background Image */}  
-              <div  
+              {/* Background image */}  
+              <div   
                 className="Background"  
                 style={{  
-                  alignSelf: 'stretch',  
-                  height: '280px',  
-                  background: product.imageBase64  
-                    ? `url(${product.imageBase64}) center/cover no-repeat`  
+                  width: '100%',  
+                  height: '338.75px',  
+                  background: product.imageBase64   
+                    ? `url(${product.imageBase64})`   
                     : '#0B0B0B',  
-                  position: 'relative'  
+                  backgroundSize: 'cover',  
+                  backgroundPosition: 'center'  
                 }}  
-              >  
-                {!product.imageBase64 && (  
+              />  
+  
+              {/* Product info */}  
+              <div style={{  
+                padding: '14px',  
+                display: 'flex',  
+                flexDirection: 'column',  
+                gap: '7.20px'  
+              }}>  
+                {/* Label and Price */}  
+                <div style={{  
+                  display: 'flex',  
+                  justifyContent: 'space-between',  
+                  alignItems: 'center'  
+                }}>  
                   <div style={{  
-                    position: 'absolute',  
-                    top: '50%',  
-                    left: '50%',  
-                    transform: 'translate(-50%, -50%)',  
-                    fontSize: '48px',  
-                    opacity: 0.3  
+                    color: '#B6B9BF',  
+                    fontSize: '14.40px',  
+                    fontFamily: 'Segoe UI, system-ui, sans-serif',  
+                    fontWeight: 400,  
+                    lineHeight: '20.88px'  
                   }}>  
-                    📦  
+                    {product.label}  
                   </div>  
-                )}  
-              </div>  
-  
-              {/* Product Info Container */}  
-              <div  
-                style={{  
-                  alignSelf: 'stretch',  
-                  padding: '14px',  
-                  flexDirection: 'column',  
-                  justifyContent: 'flex-start',  
-                  alignItems: 'flex-start',  
-                  gap: '7.20px',  
-                  display: 'flex'  
-                }}  
-              >  
-                {/* Label and Price Row */}  
-                <div  
-                  style={{  
-                    alignSelf: 'stretch',  
-                    justifyContent: 'space-between',  
-                    alignItems: 'center',  
-                    display: 'inline-flex'  
-                  }}  
-                >  
-                  {/* Label */}  
-                  <div  
-                    style={{  
-                      flexDirection: 'column',  
-                      justifyContent: 'flex-start',  
-                      alignItems: 'flex-start',  
-                      display: 'inline-flex'  
-                    }}  
-                  >  
-                    <div  
-                      style={{  
-                        justifyContent: 'center',  
-                        display: 'flex',  
-                        flexDirection: 'column',  
-                        color: '#B6B9BF',  
-                        fontSize: '14.40px',  
-                        fontFamily: 'Segoe UI, system-ui, sans-serif',  
-                        fontWeight: 400,  
-                        lineHeight: '20.88px',  
-                        wordWrap: 'break-word'  
-                      }}  
-                    >  
-                      {product.label}  
-                    </div>  
-                  </div>  
-  
-                  {/* Price */}  
-                  <div  
-                    style={{  
-                      flexDirection: 'column',  
-                      justifyContent: 'flex-start',  
-                      alignItems: 'flex-start',  
-                      display: 'inline-flex'  
-                    }}  
-                  >  
-                    <div  
-                      style={{  
-                        justifyContent: 'center',  
-                        display: 'flex',  
-                        flexDirection: 'column',  
-                        color: '#B6B9BF',  
-                        fontSize: '14.40px',  
-                        fontFamily: 'Segoe UI, system-ui, sans-serif',  
-                        fontWeight: 400,  
-                        lineHeight: '20.88px',  
-                        wordWrap: 'break-word'  
-                      }}  
-                    >  
-                      €{product.price.toFixed(2)}  
-                    </div>  
+                  <div style={{  
+                    color: '#B6B9BF',  
+                    fontSize: '14.40px',  
+                    fontFamily: 'Segoe UI, system-ui, sans-serif',  
+                    fontWeight: 400,  
+                    lineHeight: '20.88px'  
+                  }}>  
+                    €{product.price.toFixed(2)}  
                   </div>  
                 </div>  
   
                 {/* Product Name */}  
-                <div  
-                  style={{  
-                    alignSelf: 'stretch',  
-                    paddingBottom: '0.52px',  
-                    flexDirection: 'column',  
-                    justifyContent: 'flex-start',  
-                    alignItems: 'flex-start',  
-                    display: 'flex'  
-                  }}  
-                >  
-                  <div  
-                    style={{  
-                      alignSelf: 'stretch',  
-                      justifyContent: 'center',  
-                      display: 'flex',  
-                      flexDirection: 'column',  
-                      color: '#F5F5F5',  
-                      fontSize: '16.80px',  
-                      fontFamily: 'Segoe UI, system-ui, sans-serif',  
-                      fontWeight: 700,  
-                      lineHeight: '24.36px',  
-                      wordWrap: 'break-word'  
-                    }}  
-                  >  
-                    {product.name}  
-                  </div>  
+                <div style={{  
+                  color: '#F5F5F5',  
+                  fontSize: '16.80px',  
+                  fontFamily: 'Segoe UI, system-ui, sans-serif',  
+                  fontWeight: 700,  
+                  lineHeight: '24.36px'  
+                }}>  
+                  {product.name}  
                 </div>  
               </div>  
             </a>  
@@ -324,14 +242,14 @@ export default function EmbedGrowSlowlyShopPage() {
         }  
           
         .product-carousel-wrapper {  
-          -ms-overflow-style: none;  /* IE y Edge */  
-          scrollbar-width: none;  /* Firefox */  
+          -ms-overflow-style: none;  
+          scrollbar-width: none;  
         }  
   
-        /* Ajustes específicos para móvil */  
+        /* Ajustes para móvil */  
         @media (max-width: 768px) {  
           .product-carousel-wrapper {  
-            padding: 10px 16px !important;  
+            padding: 10px !important;  
             gap: 16px !important;  
           }  
   
