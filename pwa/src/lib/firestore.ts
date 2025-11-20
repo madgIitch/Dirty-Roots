@@ -766,3 +766,82 @@ export async function deleteSeatReservation(reservationId: string): Promise<void
     throw new Error("Failed to delete seat reservation");  
   }  
 }
+
+// ========== PRODUCTS CRUD OPERATIONS ==========  
+  
+/**  
+ * Representa un producto de la tienda "Things that grow slowly"  
+ */  
+export type Product = {  
+  id?: string;  
+  name: string;  
+  label: string;  
+  price: number;  
+  link: string;  
+  imageBase64: string;  
+  createdBy: string;  
+  createdAt: Timestamp;  
+};  
+  
+/**  
+ * Crea un nuevo producto en Firestore  
+ */  
+export async function addProduct(  
+  input: Omit<Product, "id" | "createdAt">  
+): Promise<string> {  
+  try {  
+    const ref = collection(db, "products");  
+    const docRef = await addDoc(ref, {  
+      ...input,  
+      createdAt: serverTimestamp(),  
+    });  
+    return docRef.id;  
+  } catch (error) {  
+    console.error("Error adding product:", error);  
+    throw new Error("Failed to create product");  
+  }  
+}  
+  
+/**  
+ * Lista los productos más recientes  
+ */  
+export async function listProducts(n = 50): Promise<Product[]> {  
+  try {  
+    const ref = collection(db, "products");  
+    const qs = query(ref, orderBy("createdAt", "desc"), limit(n));  
+    const snap = await getDocs(qs);  
+    return snap.docs.map(d => ({ id: d.id, ...(d.data() as Product) }));  
+  } catch (error) {  
+    console.error("Error listing products:", error);  
+    throw new Error("Failed to load products");  
+  }  
+}  
+  
+/**  
+ * Elimina un producto de Firestore  
+ */  
+export async function deleteProduct(productId: string): Promise<void> {  
+  try {  
+    const ref = doc(db, "products", productId);  
+    await deleteDoc(ref);  
+  } catch (error) {  
+    console.error("Error deleting product:", error);  
+    throw new Error("Failed to delete product");  
+  }  
+}  
+  
+/**  
+ * Actualiza un producto existente  
+ */  
+export async function updateProduct(  
+  productId: string,   
+  updates: Partial<Omit<Product, "id" | "createdAt" | "createdBy">>  
+): Promise<void> {  
+  try {  
+    const ref = doc(db, "products", productId);  
+    await updateDoc(ref, updates);  
+  } catch (error) {  
+    console.error("Error updating product:", error);  
+    throw new Error("Failed to update product");  
+  }  
+}
