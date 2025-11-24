@@ -153,6 +153,29 @@ export type SeatReservation = {
   createdAt: Timestamp;  
 };  
   
+
+export type SeasonalToolkit = {  
+  id?: string;  
+  season: 'winter' | 'spring' | 'summer' | 'autumn';  
+  title: string;  
+  description: string;  
+  calmReminder: string;  
+  checklist: string[];  
+  lightMap: {  
+    description: string;  
+  };  
+  microGuide: string;  
+  downloadables: {  
+    checklistPdf?: string;  
+    posterPdf?: string;  
+    guidePdf?: string;  
+  };  
+  activeFrom: Timestamp;  
+  activeTo: Timestamp;  
+  createdBy: string;  
+  createdAt: Timestamp;  
+};
+
 // ========== PLACES CRUD OPERATIONS ==========  
   
 /**  
@@ -843,5 +866,90 @@ export async function updateProduct(
   } catch (error) {  
     console.error("Error updating product:", error);  
     throw new Error("Failed to update product");  
+  }  
+}
+
+
+/**  
+ * Crea un nuevo toolkit estacional en Firestore  
+ */  
+export async function addSeasonalToolkit(    
+  input: Omit<SeasonalToolkit, "id" | "createdAt">    
+): Promise<string> {    
+  try {    
+    const ref = collection(db, "seasonalToolkits");  
+      
+    // Limpiar campos undefined  
+    const cleanedDownloadables: Record<string, string> = {};  
+    if (input.downloadables.checklistPdf) {  
+      cleanedDownloadables.checklistPdf = input.downloadables.checklistPdf;  
+    }  
+    if (input.downloadables.posterPdf) {  
+      cleanedDownloadables.posterPdf = input.downloadables.posterPdf;  
+    }  
+    if (input.downloadables.guidePdf) {  
+      cleanedDownloadables.guidePdf = input.downloadables.guidePdf;  
+    }  
+      
+    const cleanedInput = {  
+      ...input,  
+      lightMap: {  
+        description: input.lightMap.description  
+      },  
+      downloadables: cleanedDownloadables  
+    };  
+      
+    const docRef = await addDoc(ref, {    
+      ...cleanedInput,    
+      createdAt: serverTimestamp(),    
+    });    
+    return docRef.id;    
+  } catch (error) {    
+    console.error("Error adding seasonal toolkit:", error);    
+    throw new Error("Failed to create seasonal toolkit");    
+  }    
+}
+  
+/**  
+ * Lista los toolkits estacionales más recientes  
+ */  
+export async function listSeasonalToolkits(n = 50): Promise<SeasonalToolkit[]> {  
+  try {  
+    const ref = collection(db, "seasonalToolkits");  
+    const qs = query(ref, orderBy("createdAt", "desc"), limit(n));  
+    const snap = await getDocs(qs);  
+    return snap.docs.map(d => ({ id: d.id, ...(d.data() as SeasonalToolkit) }));  
+  } catch (error) {  
+    console.error("Error listing seasonal toolkits:", error);  
+    throw new Error("Failed to load seasonal toolkits");  
+  }  
+}  
+  
+/**  
+ * Elimina un toolkit estacional de Firestore  
+ */  
+export async function deleteSeasonalToolkit(toolkitId: string): Promise<void> {  
+  try {  
+    const ref = doc(db, "seasonalToolkits", toolkitId);  
+    await deleteDoc(ref);  
+  } catch (error) {  
+    console.error("Error deleting seasonal toolkit:", error);  
+    throw new Error("Failed to delete seasonal toolkit");  
+  }  
+}  
+  
+/**  
+ * Actualiza un toolkit estacional existente  
+ */  
+export async function updateSeasonalToolkit(  
+  toolkitId: string,  
+  updates: Partial<Omit<SeasonalToolkit, "id" | "createdAt" | "createdBy">>  
+): Promise<void> {  
+  try {  
+    const ref = doc(db, "seasonalToolkits", toolkitId);  
+    await updateDoc(ref, updates);  
+  } catch (error) {  
+    console.error("Error updating seasonal toolkit:", error);  
+    throw new Error("Failed to update seasonal toolkit");  
   }  
 }
