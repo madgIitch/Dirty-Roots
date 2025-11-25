@@ -72,7 +72,7 @@ export default function EmbedGrowSlowlyShopPage() {
       height: '600px',  
       position: 'relative',  
       background: '#0B0B0B',  
-      overflow: 'hidden'  
+      overflow: 'visible'  
     }}>  
       {products.length === 0 ? (  
         <div style={{  
