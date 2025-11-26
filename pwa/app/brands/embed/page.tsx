@@ -129,13 +129,18 @@ export default function BrandsEmbedPage() {
   }  
   
   return (  
+    // Main container - update to match shop embed dimensions  
     <div style={{  
-      width: '100vw',  
-      height: '100vh',  
-      background: '#0B0B0B',  
-      overflow: 'hidden',  
-      position: 'relative'  
-    }}>  
+    width: '1192px',  
+    maxWidth: '100%',  
+    height: '600px',  
+    position: 'relative',  
+    background: '#0B0B0B',  
+    overflowX: 'auto',  
+    overflowY: 'hidden',  
+    cursor: 'grab',  
+    userSelect: 'none'  
+    }}> 
       {/* Header */}  
       <div style={{  
         position: 'absolute',  
