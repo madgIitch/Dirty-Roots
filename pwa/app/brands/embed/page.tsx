@@ -141,33 +141,6 @@ export default function BrandsEmbedPage() {
     cursor: 'grab',  
     userSelect: 'none'  
     }}> 
-      {/* Header */}  
-      <div style={{  
-        position: 'absolute',  
-        top: '40px',  
-        left: '50%',  
-        transform: 'translateX(-50%)',  
-        zIndex: 10,  
-        textAlign: 'center'  
-      }}>  
-        <h1 style={{  
-          fontSize: '32px',  
-          fontWeight: 'bold',  
-          color: '#F5F5F5',  
-          margin: 0,  
-          marginBottom: '8px'  
-        }}>  
-          🌿 Partner Brands  
-        </h1>  
-        <p style={{  
-          fontSize: '16px',  
-          color: '#B6B9BF',  
-          margin: 0  
-        }}>  
-          Discover sustainable brands we love  
-        </p>  
-      </div>  
-  
       {/* Carousel Container */}  
       <div style={{    
         display: 'flex',    
@@ -389,7 +362,7 @@ export default function BrandsEmbedPage() {
                           e.currentTarget.style.background = '#A4CB3E';  
                         }}  
                       >  
-                        Visit Website →  
+                        More Info →  
                       </a>  
                     </div>  
                   </div>  
