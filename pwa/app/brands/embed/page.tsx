@@ -5,14 +5,7 @@ import { useEffect, useState } from "react";
 import { Brand, listBrands } from '@/src/lib/firestore';
 import { ensureAnonAuth } from "@/src/lib/firebase";  
   
-interface Brand {  
-  id: string;  
-  name: string;  
-  description: string;  
-  discount?: string;  
-  link: string;  
-  imageBase64: string;  
-}  
+
   
 export default function BrandsEmbedPage() {  
   const [brands, setBrands] = useState<Brand[]>([]);  
