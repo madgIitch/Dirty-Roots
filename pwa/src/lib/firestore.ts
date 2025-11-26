@@ -178,7 +178,7 @@ export type SeasonalToolkit = {
 
 
 export type Brand = {  
-  id?: string;  
+  id: string;  
   name: string;  
   description: string;  
   discount?: string;  
@@ -996,7 +996,7 @@ export async function addBrand(
 /**  
  * Lista las marcas más recientes  
  *   
- * @param n - Número máximo de marcas a retornar (default: 50)  
+ * @param limit - Número máximo de marcas a retornar (default: 50)  
  * @returns Promise<Brand[]> - Array de marcas con sus IDs  
  * @throws Error si falla la consulta a Firestore  
  */  
@@ -1021,7 +1021,7 @@ export async function listBrands(limit: number = 50): Promise<Brand[]> {
     console.error("Error listing brands:", error);  
     throw new Error("Failed to load brands");  
   }  
-}
+}  
   
 /**  
  * Actualiza una marca existente  
