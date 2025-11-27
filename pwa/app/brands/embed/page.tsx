@@ -50,7 +50,7 @@ export default function BrandsEmbedPage() {
     return (  
       <div style={{  
         width: '100vw',  
-        height: '100vh',  
+        height: '600px',  
         display: 'flex',  
         alignItems: 'center',  
         justifyContent: 'center',  
