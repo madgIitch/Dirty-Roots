@@ -1117,7 +1117,7 @@ export async function addPlantPhoto(
     console.error("Error adding plant photo:", error);  
     throw new Error("Failed to create plant photo");  
   }  
-}  
+} 
   
 /**  
  * Lista las fotos de planta más recientes  

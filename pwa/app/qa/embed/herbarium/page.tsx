@@ -113,7 +113,6 @@ function HerbariumPage() {
         imageBase64: values.imageBase64,  
         createdBy: user.uid,  
         userName: userName,  
-        createdAt: new Date(),  
         likes: [],  
         likesCount: 0,  
         comments: []  
