@@ -82,7 +82,7 @@ export default function BrandsEmbedPage() {
     return (  
       <div style={{  
         width: '100vw',  
-        height: '100vh',  
+        height: '600px',  
         display: 'flex',  
         alignItems: 'center',  
         justifyContent: 'center',  
@@ -114,7 +114,7 @@ export default function BrandsEmbedPage() {
     return (  
       <div style={{  
         width: '100vw',  
-        height: '100vh',  
+        height: '600px',  
         display: 'flex',  
         alignItems: 'center',  
         justifyContent: 'center',  
@@ -148,7 +148,7 @@ export default function BrandsEmbedPage() {
         display: 'flex',    
         alignItems: 'center',    
         justifyContent: 'center',    
-        height: '100%',  // Cambiar de '100vh' a '100%'  
+        height: '100%',  // Cambiar de '600px' a '100%'  
         padding: '0 80px'    
         }}>
         {/* Navigation Buttons */}  
