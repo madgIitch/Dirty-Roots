@@ -19,6 +19,7 @@ import {
   collection,  
   addDoc,  
   serverTimestamp,  
+  FieldValue, 
   Timestamp,  
   query,  
   orderBy,  
@@ -198,9 +199,21 @@ export type PlantPhoto = {
   description: string;  
   imageBase64: string;  
   createdBy: string;  
+  userName?: string; // Nombre del usuario que posteó  
   createdAt: Timestamp;  
   status?: "active" | "deleted";  
-}; 
+  likes: string[]; // Array de UIDs de usuarios que dieron like  
+  likesCount: number; // Contador de likes  
+  comments: Comment[]; // Array de comentarios  
+};  
+  
+export type Comment = {  
+  id: string;  
+  text: string;  
+  createdBy: string;  
+  userName?: string;  
+  createdAt: Timestamp;  
+};
 
 
 
@@ -1155,5 +1168,86 @@ export async function deletePlantPhoto(id: string): Promise<void> {
   } catch (error) {  
     console.error("Error deleting plant photo:", error);  
     throw new Error("Failed to delete plant photo");  
+  }  
+}
+
+// Agregar like a una foto  
+export async function addLikeToPhoto(photoId: string, userId: string): Promise<void> {  
+  try {  
+    const ref = doc(db, "plantPhotos", photoId);  
+    const photoDoc = await getDoc(ref);  
+    const currentLikes = photoDoc.data()?.likes || [];  
+      
+    if (!currentLikes.includes(userId)) {  
+      await updateDoc(ref, {  
+        likes: [...currentLikes, userId],  
+        likesCount: currentLikes.length + 1  
+      });  
+    }  
+  } catch (error) {  
+    console.error("Error adding like:", error);  
+    throw new Error("Failed to add like");  
+  }  
+}  
+  
+// Remover like de una foto  
+export async function removeLikeFromPhoto(photoId: string, userId: string): Promise<void> {  
+  try {  
+    const ref = doc(db, "plantPhotos", photoId);  
+    const photoDoc = await getDoc(ref);  
+    const currentLikes = photoDoc.data()?.likes || [];  
+      
+    await updateDoc(ref, {  
+      likes: currentLikes.filter((id: string) => id !== userId),  
+      likesCount: Math.max(0, currentLikes.length - 1)  
+    });  
+  } catch (error) {  
+    console.error("Error removing like:", error);  
+    throw new Error("Failed to remove like");  
+  }  
+}  
+  
+// Agregar comentario a una foto  
+export async function addCommentToPhoto(  
+  photoId: string,  
+  comment: Omit<Comment, "id" | "createdAt">  
+): Promise<string> {  
+  try {  
+    const ref = doc(db, "plantPhotos", photoId);  
+    const photoDoc = await getDoc(ref);  
+    const currentComments = photoDoc.data()?.comments || [];  
+    const commentId = `comment_${Date.now()}`;  
+      
+    // Crear el comentario sin timestamp por ahora  
+    const newComment = {  
+      ...comment,  
+      id: commentId,  
+      createdAt: new Date() // Usar timestamp del cliente temporalmente  
+    };  
+      
+    await updateDoc(ref, {  
+      comments: [...currentComments, newComment]  
+    });  
+      
+    return commentId;  
+  } catch (error) {  
+    console.error("Error adding comment:", error);  
+    throw new Error("Failed to add comment");  
+  }  
+} 
+  
+// Eliminar comentario de una foto  
+export async function deleteCommentFromPhoto(photoId: string, commentId: string): Promise<void> {  
+  try {  
+    const ref = doc(db, "plantPhotos", photoId);  
+    const photoDoc = await getDoc(ref);  
+    const currentComments = photoDoc.data()?.comments || [];  
+      
+    await updateDoc(ref, {  
+      comments: currentComments.filter((c: Comment) => c.id !== commentId)  
+    });  
+  } catch (error) {  
+    console.error("Error deleting comment:", error);  
+    throw new Error("Failed to delete comment");  
   }  
 }
