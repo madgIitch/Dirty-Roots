@@ -184,7 +184,7 @@ function HerbariumPage() {
   return (    
     <div style={{           
       height: '100%',           
-      overflowY: 'auto',           
+      overflow: 'hidden',           
       padding: '24px',    
       paddingBottom: '94px',    
       scrollbarWidth: 'none',    
