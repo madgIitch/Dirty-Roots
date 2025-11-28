@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';  
 import { zodResolver } from '@hookform/resolvers/zod';  
 import { auth } from '@/src/lib/firebase';  
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';  
+import { signInWithEmailAndPassword } from 'firebase/auth'; // ← Solo importar signIn  
   
 const authSchema = z.object({  
   email: z.string().email('Invalid email'),  
@@ -17,11 +17,10 @@ const authSchema = z.object({
 type AuthFormValues = z.infer<typeof authSchema>;  
   
 export default function AuthPage() {  
-  const [isLogin, setIsLogin] = useState(true);  
   const [error, setError] = useState('');  
   const [loading, setLoading] = useState(false);  
   const router = useRouter();  
-      
+        
   const { register, handleSubmit, formState } = useForm<AuthFormValues>({  
     resolver: zodResolver(authSchema),  
   });  
@@ -29,13 +28,10 @@ export default function AuthPage() {
   const onSubmit = handleSubmit(async (values) => {  
     setError('');  
     setLoading(true);  
-        
+          
     try {  
-      if (isLogin) {  
-        await signInWithEmailAndPassword(auth, values.email, values.password);  
-      } else {  
-        await createUserWithEmailAndPassword(auth, values.email, values.password);  
-      }  
+      // Solo login, sin opción de registro  
+      await signInWithEmailAndPassword(auth, values.email, values.password);  
       router.push('/');  
     } catch (error: any) {  
       setError(error.message || 'Authentication error');  
@@ -68,9 +64,9 @@ export default function AuthPage() {
           marginBottom: '32px',  
           color: '#F5F5F5'  
         }}>  
-          {isLogin ? '🔐 Login' : '✨ Register'}  
+          🔐 Admin Login  
         </h1>  
-            
+              
         {error && (  
           <div style={{  
             borderRadius: '12px',  
@@ -195,26 +191,7 @@ export default function AuthPage() {
               }  
             }}  
           >  
-            {loading ? 'Loading...' : (isLogin ? 'Enter' : 'Create Account')}  
-          </button>  
-  
-          <button  
-            type="button"  
-            onClick={() => setIsLogin(!isLogin)}  
-            style={{  
-              width: '100%',  
-              padding: '12px',  
-              background: 'transparent',  
-              border: 'none',  
-              color: '#B6B9BF',  
-              fontSize: '14px',  
-              cursor: 'pointer',  
-              transition: 'all 0.2s'  
-            }}  
-            onMouseEnter={(e) => e.currentTarget.style.color = '#F5F5F5'}  
-            onMouseLeave={(e) => e.currentTarget.style.color = '#B6B9BF'}  
-          >  
-            {isLogin ? 'Dont have an account? Sign up' : 'Already have an account? Log in'}  
+            {loading ? 'Loading...' : 'Enter'}  
           </button>  
         </form>  
   

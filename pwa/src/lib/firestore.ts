@@ -226,6 +226,15 @@ export type UserProfile = {
   updatedAt?: Timestamp;  
 };
 
+export interface Admin {  
+  id: string;  
+  email: string;  
+  displayName: string;  
+  role: 'owner' | 'admin';  
+  createdBy: string;  
+  createdAt: Timestamp;  
+} 
+
 // ========== PLACES CRUD OPERATIONS ==========  
   
 /**  
@@ -1318,5 +1327,56 @@ export async function getPlantPhoto(id: string): Promise<PlantPhoto | null> {
   } catch (error) {  
     console.error("Error getting plant photo:", error);  
     throw new Error("Failed to get plant photo");  
+  }  
+}
+
+
+// Funciones CRUD para administradores  
+export async function addAdmin(input: Omit<Admin, 'id' | 'createdAt'>): Promise<string> {  
+  try {  
+    const ref = collection(db, "admins");  
+    const docRef = await addDoc(ref, {  
+      ...input,  
+      createdAt: serverTimestamp(),  
+    });  
+    return docRef.id;  
+  } catch (error) {  
+    console.error("Error adding admin:", error);  
+    throw new Error("Failed to create admin");  
+  }  
+}  
+  
+export async function listAdmins(): Promise<Admin[]> {  
+  try {  
+    const ref = collection(db, "admins");  
+    const qs = query(ref, orderBy("createdAt", "desc"));  
+    const snap = await getDocs(qs);  
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Admin));  
+  } catch (error) {  
+    console.error("Error listing admins:", error);  
+    throw new Error("Failed to load admins");  
+  }  
+}  
+  
+export async function deleteAdmin(adminId: string): Promise<void> {  
+  try {  
+    const ref = doc(db, "admins", adminId);  
+    await deleteDoc(ref);  
+  } catch (error) {  
+    console.error("Error deleting admin:", error);  
+    throw new Error("Failed to delete admin");  
+  }  
+}  
+  
+export async function getAdminByEmail(email: string): Promise<Admin | null> {  
+  try {  
+    const ref = collection(db, "admins");  
+    const qs = query(ref, where("email", "==", email), where("role", "==", "owner"));  
+    const snap = await getDocs(qs);  
+    if (snap.empty) return null;  
+    return { id: snap.docs[0].id, ...snap.docs[0].data() } as Admin;  
+  } catch (error) {  
+    console.error("Error getting owner by email:", error);  
+    return null;  
   }  
 }

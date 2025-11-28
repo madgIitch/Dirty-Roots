@@ -2,7 +2,7 @@
 'use client';  
   
 import { useEffect, useState } from 'react';  
-import { getAuth, onAuthStateChanged } from 'firebase/auth';  
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';  
 import { useRouter } from 'next/navigation';  
   
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {  
@@ -12,10 +12,12 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const auth = getAuth();  
   
   useEffect(() => {  
-    const unsubscribe = onAuthStateChanged(auth, (user) => {  
-      if (user) {  
+    const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {  
+      if (user && !user.isAnonymous) {  
+        // Solo usuarios autenticados con email (no anónimos)  
         setAuthenticated(true);  
       } else {  
+        // Redirigir al login de administradores si no hay usuario o es anónimo  
         router.push('/auth');  
       }  
       setLoading(false);  
@@ -24,7 +26,33 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     return () => unsubscribe();  
   }, [auth, router]);  
   
-  if (loading) return <div>Cargando...</div>;  
+  if (loading) {  
+    return (  
+      <div style={{  
+        display: 'flex',  
+        alignItems: 'center',  
+        justifyContent: 'center',  
+        height: '100vh',  
+        background: '#0B0B0B'  
+      }}>  
+        <div style={{  
+          display: 'inline-block',  
+          width: '48px',  
+          height: '48px',  
+          border: '4px solid #A4CB3E',  
+          borderTopColor: 'transparent',  
+          borderRadius: '50%',  
+          animation: 'spin 1s linear infinite'  
+        }}></div>  
+        <style jsx>{`  
+          @keyframes spin {  
+            to { transform: rotate(360deg); }  
+          }  
+        `}</style>  
+      </div>  
+    );  
+  }  
+  
   if (!authenticated) return null;  
   
   return <>{children}</>;  
