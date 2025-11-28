@@ -34,6 +34,7 @@ export default function EmbedLayout({
         {children}  
       </div>  
   
+  
       <nav style={{  
         height: '70px',  
         background: '#0F0F0F',  
