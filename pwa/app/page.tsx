@@ -12,17 +12,17 @@ export default function HomePage() {
   const [authenticated, setAuthenticated] = useState(false);      
   const router = useRouter();      
       
-  useEffect(() => {      
-    const unsubscribe = onAuthStateChanged(auth, (user) => {      
-      if (user) {      
-        setAuthenticated(true);      
-      } else {      
-        router.push('/auth');      
-      }      
-      setLoading(false);      
-    });      
+  useEffect(() => {  
+    const unsubscribe = onAuthStateChanged(auth, (user) => {  
+      if (user && !user.isAnonymous) { // ← Añadir verificación !isAnonymous  
+        setAuthenticated(true);  
+      } else {  
+        router.push('/auth'); // Admin login  
+      }  
+      setLoading(false);  
+    });  
       
-    return () => unsubscribe();      
+    return () => unsubscribe();  
   }, [router]);      
       
   const handleLogout = async () => {      

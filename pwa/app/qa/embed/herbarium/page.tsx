@@ -228,7 +228,7 @@ function HerbariumPage() {
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>    
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>    
           <h1 style={{ color: '#F5F5F5', fontSize: '28px', fontWeight: 'bold' }}>    
-            Herbario Comunitario    
+            Community Herbarium    
           </h1>    
           <button    
             onClick={() => setShowUploadForm(true)}    
@@ -243,7 +243,7 @@ function HerbariumPage() {
               cursor: 'pointer'    
             }}    
           >    
-            + Subir Foto    
+            + Upload Photo    
           </button>    
         </div>    
     
@@ -413,7 +413,7 @@ function HerbariumPage() {
                               type="text"                
                               value={photo.id ? (commentInputs[photo.id] || '') : ''}                
                               onChange={(e) => photo.id && setCommentInputs({ ...commentInputs, [photo.id]: e.target.value })}                
-                              placeholder="Añadir comentario..."                
+                              placeholder="Add comment..."                
                               style={{                
                                 flex: 1,                
                                 background: '#0B0B0B',                
@@ -437,7 +437,7 @@ function HerbariumPage() {
                                 cursor: 'pointer'                
                               }}                
                             >                
-                              Enviar                
+                              Send                
                             </button>    
                           </div>    
                         </div>    

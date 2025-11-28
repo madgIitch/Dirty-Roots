@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';  
 import { z } from 'zod';  
 import { zodResolver } from '@hookform/resolvers/zod';  
-import { getUserProfile, updateUserProfile, createUserProfile, listPlantPhotos } from '@/src/lib/firestore';  
+import { getUserProfile, updateUserProfile, createUserProfile, listPlantPhotos, PlantPhoto } from '@/src/lib/firestore';  
 import UserProtectedRoute from '@/src/components/UserProtectedRoute';  
 import imageCompression from 'browser-image-compression';  
 import { auth } from '@/src/lib/firebase';  
 import { signOut } from 'firebase/auth';  
 import { useRouter } from 'next/navigation';  
-  
+import Link from 'next/link';  
+ 
 const profileSchema = z.object({  
   displayName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),  
   bio: z.string().optional(),  
@@ -24,10 +25,10 @@ function ProfilePage() {
   const [saving, setSaving] = useState(false);  
   const [error, setError] = useState('');  
   const [success, setSuccess] = useState(false);  
-  const [userPlants, setUserPlants] = useState<any[]>([]);  
+  const [userPlants, setUserPlants] = useState<PlantPhoto[]>([]);  
   const router = useRouter();  
   
-  const { register, handleSubmit, setValue, watch, reset, formState } = useForm<ProfileFormValues>({  
+  const { register, handleSubmit, setValue, watch, reset } = useForm<ProfileFormValues>({  
     resolver: zodResolver(profileSchema),  
   });  
   
@@ -81,7 +82,7 @@ function ProfilePage() {
         const sizeInBytes = base64String.length;  
             
         if (sizeInBytes > 900000) {  
-          setError('La imagen es demasiado grande. Intenta con una imagen más pequeña.');  
+          setError('The image is too large. Try a smaller image.');  
           return;  
         }  
             
@@ -92,7 +93,7 @@ function ProfilePage() {
           
     } catch (error) {  
       console.error('Error en compresión de imagen:', error);  
-      setError('Error procesando la imagen. Por favor intenta con otra imagen.');  
+      setError('Error processing the image. Please try another image.');  
     }  
   }  
   
@@ -123,7 +124,7 @@ function ProfilePage() {
       setTimeout(() => setSuccess(false), 3000);  
     } catch (error) {  
       console.error('Error saving profile:', error);  
-      setError('Error guardando el perfil. Por favor intenta de nuevo.');  
+      setError('Error saving profile. Please try again.');  
     } finally {  
       setSaving(false);  
     }  
@@ -131,12 +132,12 @@ function ProfilePage() {
   
   async function handleLogout() {  
     try {  
-      await signOut(auth);  
-      router.push('/auth');  
+        await signOut(auth);  
+        router.push('/user-auth'); // ← Cambiar de /auth a /user-auth  
     } catch (error) {  
-      console.error('Error al cerrar sesión:', error);  
+        console.error('Error al cerrar sesión:', error);  
     }  
-  }  
+  } 
   
   if (loading) {  
     return (  
@@ -186,7 +187,7 @@ function ProfilePage() {
             fontWeight: 'bold',  
             color: '#F5F5F5'  
           }}>  
-            👤 Mi Perfil  
+            👤 My Profile  
           </h2>  
           <button  
             onClick={handleLogout}  
@@ -201,7 +202,7 @@ function ProfilePage() {
               cursor: 'pointer'  
             }}  
           >  
-            Cerrar sesión  
+            Logout  
           </button>  
         </div>  
   
@@ -229,7 +230,7 @@ function ProfilePage() {
             color: '#A4CB3E',  
             fontSize: '14px'  
           }}>  
-            ✅ Perfil guardado correctamente  
+            ✅ Profile saved successfully  
           </div>  
         )}  
   
@@ -243,7 +244,7 @@ function ProfilePage() {
               marginBottom: '8px',  
               color: '#F5F5F5'  
             }}>  
-              Foto de perfil  
+              Profile Photo  
             </label>  
                 
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>  
@@ -305,7 +306,7 @@ function ProfilePage() {
               marginBottom: '8px',  
               color: '#F5F5F5'  
             }}>  
-              Nombre  
+              Name  
             </label>  
             <input  
               {...register('displayName')}  
@@ -318,7 +319,7 @@ function ProfilePage() {
                 color: '#F5F5F5',  
                 fontSize: '14px'  
               }}  
-              placeholder="Tu nombre"  
+              placeholder="Your name"  
             />  
           </div>  
   
@@ -331,7 +332,7 @@ function ProfilePage() {
               marginBottom: '8px',  
               color: '#F5F5F5'  
             }}>  
-              Bio (opcional)  
+              Bio (optional)  
             </label>  
             <textarea  
               {...register('bio')}  
@@ -346,7 +347,7 @@ function ProfilePage() {
                 fontSize: '14px',  
                 resize: 'vertical'  
               }}  
-              placeholder="Cuéntanos sobre ti y tus plantas..."  
+              placeholder="Tell us about you and your plants..."  
             />  
           </div>  
   
@@ -365,7 +366,7 @@ function ProfilePage() {
               cursor: saving ? 'not-allowed' : 'pointer'  
             }}  
           >  
-            {saving ? 'Guardando...' : 'Guardar Perfil'}  
+            {saving ? 'Saving...' : 'Save Profile'}  
           </button>  
         </form>  
   
@@ -380,7 +381,7 @@ function ProfilePage() {
             alignItems: 'center',  
             gap: '8px'  
           }}>  
-            🌿 Mis Plantas  
+            🌿 My Plants  
             <span style={{  
               fontSize: '14px',  
               color: '#B6B9BF',  
@@ -423,7 +424,7 @@ function ProfilePage() {
             </div>  
           ) : (  
             <p style={{ color: '#B6B9BF', textAlign: 'center', padding: '32px' }}>  
-              No has subido ninguna planta aún. <a href="/qa/embed/herbarium" style={{ color: '#A4CB3E' }}>Sube tu primera planta</a>  
+                You haven't uploaded any floors yet. <Link href="/qa/embed/herbarium" style={{ color: '#A4CB3E' }}>Upload your first floor</Link>  
             </p>  
           )}  
         </div>  

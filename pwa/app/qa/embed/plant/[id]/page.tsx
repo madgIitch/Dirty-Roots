@@ -107,7 +107,7 @@ function PlantDetailPage() {
         background: '#0B0B0B',  
         color: '#F5F5F5'  
       }}>  
-        Planta no encontrada  
+        Plant not found  
       </div>  
     );  
   }  
@@ -140,7 +140,7 @@ function PlantDetailPage() {
             gap: '8px'  
           }}  
         >  
-          ← Volver  
+          ← Back  
         </button>  
   
         {/* Card de la planta */}  
@@ -239,7 +239,7 @@ function PlantDetailPage() {
                       type="text"  
                       value={commentText}  
                       onChange={(e) => setCommentText(e.target.value)}  
-                      placeholder="Añadir comentario..."  
+                      placeholder="Add comment..."  
                       style={{  
                         flex: 1,  
                         background: '#0B0B0B',  
@@ -263,7 +263,7 @@ function PlantDetailPage() {
                         cursor: 'pointer'  
                       }}  
                     >  
-                      Enviar  
+                      Send  
                     </button>  
                   </div>  
                 </div>  
