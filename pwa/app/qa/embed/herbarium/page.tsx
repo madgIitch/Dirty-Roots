@@ -218,9 +218,9 @@ function HerbariumPage() {
   return (  
     <div style={{                     
       height: '100%',                     
-      overflow: 'hidden',                     
+      overflowY: 'auto',                     
       padding: '24px',              
-      paddingBottom: '94px',              
+      paddingBottom: '250px',              
       scrollbarWidth: 'none',              
       msOverflowStyle: 'none'              
     }} className="herbarium-content">  
@@ -288,7 +288,9 @@ function HerbariumPage() {
             gap: '24px',          
             width: '100%',          
             maxWidth: '400px',          
-            margin: '0 auto'          
+            margin: '0 auto',
+            marginBottom: '100px'  // ← Agregar esta línea  
+          
           }}>             
             {photos.map((photo) => {  
               const user = auth.currentUser;  
