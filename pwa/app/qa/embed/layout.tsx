@@ -13,10 +13,10 @@ export default function EmbedLayout({
   const pathname = usePathname();  
   
   const navItems = [  
-    { path: '/qa/embed/questions', icon: '/icons/questions.png', label: 'Questions' },  
-    { path: '/qa/embed/herbarium', icon: '/icons/herbarium.png', label: 'Herbarium' },  
-    { path: '/qa/embed/profile', icon: '/icons/profile.png', label: 'Profile' },  
-  ];  
+    { path: '/qa/embed/questions', icon: '/icons/navbar/questions.png', label: 'Questions' },  
+    { path: '/qa/embed/herbarium', icon: '/icons/navbar/herbarium.png', label: 'Herbarium' },  
+    { path: '/qa/embed/profile', icon: '/icons/navbar/profile.png', label: 'Profile' },  
+  ]; 
   
   return (  
     <div style={{  
