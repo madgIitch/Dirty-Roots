@@ -49,10 +49,10 @@ function QuestionsPage() {
     }    
   }    
     
-  function handleQuestionCreated(id: string) {    
-    loadQuestions();    
-    setDrawerOpen(false);    
-  }    
+  function handleQuestionCreated() {  
+    loadQuestions();  
+    setDrawerOpen(false);  
+  }   
     
   if (!mounted) {    
     return (    

@@ -1,6 +1,6 @@
 'use client';  
   
-import { useState, useEffect } from 'react';  
+import { useState, useEffect, useCallback   } from 'react';  
 import { useForm } from 'react-hook-form';  
 import { z } from 'zod';  
 import { zodResolver } from '@hookform/resolvers/zod';  
@@ -34,15 +34,12 @@ function ProfilePage() {
   
   const profileImageBase64 = watch('profileImageBase64');  
   
-  useEffect(() => {  
-    loadProfile();  
-  }, []);  
-  
-  async function loadProfile() {  
+  // 2. Wrap loadProfile with useCallback  
+  const loadProfile = useCallback(async () => {  
     try {  
       const user = auth.currentUser;  
       if (!user) return;  
-  
+    
       const profile = await getUserProfile(user.uid);  
       if (profile) {  
         reset({  
@@ -51,7 +48,7 @@ function ProfilePage() {
           profileImageBase64: profile.profileImageBase64 || '',  
         });  
       }  
-  
+    
       // Cargar plantas del usuario  
       const plants = await listPlantPhotos(50);  
       setUserPlants(plants.filter(p => p.createdBy === user.uid));  
@@ -60,7 +57,12 @@ function ProfilePage() {
     } finally {  
       setLoading(false);  
     }  
-  }  
+  }, [reset]); // Empty dependency array since no external dependencies  
+    
+  // 3. Add loadProfile to useEffect dependency array  
+  useEffect(() => {  
+    loadProfile();  
+  }, [loadProfile]);
   
   async function handleImageUpload(file: File) {  
     try {  

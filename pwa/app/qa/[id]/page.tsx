@@ -1,7 +1,7 @@
 // src/app/qa/[id]/page.tsx    
 "use client";    
     
-import { use, useEffect, useState  } from "react";    
+import { use, useEffect, useState, useCallback   } from "react";    
 import { getQuestion, setAnswer, Question  } from "@/src/lib/firestore";    
 import { ensureAnonAuth, auth } from "@/src/lib/firebase";    
 import Link from "next/link";    
@@ -11,42 +11,38 @@ export const dynamicParams = true;
 export default function QuestionDetailPage({ params }: { params: Promise<{ id: string }> }) {    
   const { id } = use(params);    
       
-  const [mounted, setMounted] = useState(false);    
+  const [mounted] = useState(false);    
   const [q, setQ] = useState<Question | null>(null);
   const [text, setText] = useState("");    
   const [refs, setRefs] = useState("");    
   const [loading, setLoading] = useState(true);    
   const [isEditing, setIsEditing] = useState(false);    
     
-  // Primer useEffect: marcar como montado en el cliente    
-  useEffect(() => {    
-    setMounted(true);    
-  }, []);    
+  // 2. Wrap loadQuestion with useCallback  
+  const loadQuestion = useCallback(async () => {  
+    try {  
+      const question = await getQuestion(id);  
+      setQ(question);  
+            
+      // Si ya hay respuesta, pre-llenar el formulario para edición      
+      if (question?.answer) {  
+        setText(question.answer.text);  
+        setRefs(question.answer.references?.join(", ") || "");  
+      }  
+    } catch (error) {  
+      console.error("Error loading question:", error);  
+    } finally {  
+      setLoading(false);  
+    }  
+  }, [id]); // Include id as dependency  
     
-  // Segundo useEffect: cargar datos solo después de montar    
-  useEffect(() => {    
-    if (!mounted) return;    
-        
-    ensureAnonAuth();    
-    loadQuestion();    
-  }, [id, mounted]);    
-    
-  async function loadQuestion() {    
-    try {    
-      const question = await getQuestion(id);    
-      setQ(question);    
-          
-      // Si ya hay respuesta, pre-llenar el formulario para edición    
-      if (question?.answer) {    
-        setText(question.answer.text);    
-        setRefs(question.answer.references?.join(", ") || "");    
-      }    
-    } catch (error) {    
-      console.error("Error loading question:", error);    
-    } finally {    
-      setLoading(false);    
-    }    
-  }    
+  // 3. Add loadQuestion to useEffect dependency array  
+  useEffect(() => {  
+    if (!mounted) return;  
+            
+    ensureAnonAuth();  
+    loadQuestion();  
+  }, [id, mounted, loadQuestion]);
     
   async function submitAnswer() {    
     if (!text.trim()) return;    
