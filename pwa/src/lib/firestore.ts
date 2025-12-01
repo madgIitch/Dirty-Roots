@@ -35,6 +35,7 @@ import {
   where  
 } from "firebase/firestore";  
 import { db } from "./firebase";  
+import { auth } from "./firebase"; // ← Add this line  
 import { LatLng, toGeohash, geohashBoundsForRadius, distanceM } from "./geoutils";  
   
 // ========== TYPE DEFINITIONS ==========  
@@ -1331,15 +1332,72 @@ export async function getPlantPhoto(id: string): Promise<PlantPhoto | null> {
 }
 
 
-// Funciones CRUD para administradores  
+// Funciones CRUD para administradores    
 export async function addAdmin(input: Omit<Admin, 'id' | 'createdAt'>): Promise<string> {  
-  const ref = doc(db, "admins", input.email); // Use email as document ID  
+  const currentUser = auth.currentUser;  
+  if (!currentUser || currentUser.isAnonymous) {  
+    throw new Error('Usuario no autenticado');  
+  }  
+      
+  console.log('=== DEBUG ADDADMIN ===');  
+  console.log('Usuario actual:', currentUser.email);  
+  console.log('UID actual:', currentUser.uid);  
+    
+  // Método 1: Buscar por email como ID del documento  
+  console.log('🔍 Buscando owner documento por ID (email como ID)...');  
+  const ownerDocByEmail = await getDoc(doc(db, "admins", currentUser.email || ''));  
+  console.log('Documento existe por email-ID:', ownerDocByEmail.exists());  
+    
+  if (ownerDocByEmail.exists()) {  
+    const data = ownerDocByEmail.data();  
+    console.log('Datos del documento por email-ID:', data);  
+    console.log('Role del documento por email-ID:', data?.role);  
+      
+    if (data?.role === 'owner') {  
+      console.log('✅ Owner verificado por email-ID');  
+    } else {  
+      console.log('❌ Role incorrecto por email-ID:', data?.role);  
+    }  
+  } else {  
+    console.log('❌ No existe documento por email-ID');  
+  }  
+    
+  // Método 2: Buscar usando getAdminByEmail (query)  
+  console.log('🔍 Buscando owner usando query getAdminByEmail...');  
+  const ownerDocByQuery = await getAdminByEmail(currentUser.email || '');  
+  console.log('Owner encontrado por query:', !!ownerDocByQuery);  
+    
+  if (ownerDocByQuery) {  
+    console.log('Datos del owner por query:', ownerDocByQuery);  
+    console.log('Role del owner por query:', ownerDocByQuery.role);  
+    console.log('ID del documento owner:', ownerDocByQuery.id);  
+  }  
+    
+  // Verificación final usando el método que funcione  
+  let isOwner = false;  
+    
+  if (ownerDocByEmail.exists() && ownerDocByEmail.data()?.role === 'owner') {  
+    isOwner = true;  
+    console.log('✅ Verificación exitosa usando email-ID');  
+  } else if (ownerDocByQuery && ownerDocByQuery.role === 'owner') {  
+    isOwner = true;  
+    console.log('✅ Verificación exitosa usando query');  
+  }  
+    
+  if (!isOwner) {  
+    console.log('❌ ERROR: No se pudo verificar permisos de owner');  
+    console.log(' - Email-ID exists:', ownerDocByEmail.exists());  
+    console.log(' - Query found:', !!ownerDocByQuery);  
+    throw new Error('No tienes permisos de owner');  
+  }  
+      
+  const ref = doc(db, "admins", input.email);  
   await setDoc(ref, {  
     ...input,  
     createdAt: serverTimestamp(),  
   });  
   return input.email;  
-} 
+}
   
 export async function listAdmins(): Promise<Admin[]> {  
   try {  
@@ -1374,4 +1432,47 @@ export async function getAdminByEmail(email: string): Promise<Admin | null> {
     console.error("Error getting owner by email:", error);  
     return null;  
   }  
+}
+
+
+export async function addAdminWithOwner(    
+  input: Omit<Admin, 'id' | 'createdAt'>,     
+  ownerEmail: string    
+): Promise<string> {    
+  console.log('=== DEBUG ADDADMINWITHOWNER ===');  
+  console.log('Owner email a verificar:', ownerEmail);  
+  console.log('Input para nuevo admin:', input);  
+    
+  // Verificar si el ownerEmail tiene rol 'owner' (independientemente del usuario actual)    
+  console.log('🔍 Buscando documento owner...');  
+  const ownerDoc = await getAdminByEmail(ownerEmail);  
+    
+  console.log('Owner document encontrado:', !!ownerDoc);  
+  if (ownerDoc) {  
+    console.log('Datos del owner:', ownerDoc);  
+    console.log('Role del owner:', ownerDoc.role);  
+  }  
+    
+  if (!ownerDoc || ownerDoc.role !== 'owner') {    
+    console.log('❌ ERROR: Owner no encontrado o role incorrecto');  
+    throw new Error('No tienes permisos de owner');    
+  }    
+    
+  console.log('✅ Owner verificado, creando documento admin...');  
+  console.log('Ruta del documento:', `/admins/${input.email}`);  
+  console.log('Datos a guardar:', {  
+    email: input.email,  
+    displayName: input.displayName,  
+    role: input.role,  
+    createdBy: input.createdBy  
+  });  
+    
+  const ref = doc(db, "admins", input.email);    
+  await setDoc(ref, {    
+    ...input,    
+    createdAt: serverTimestamp(),    
+  });    
+    
+  console.log('✅ Admin creado exitosamente');  
+  return input.email;    
 }
