@@ -7,8 +7,7 @@ import Link from "next/link";
 import ProtectedRoute from "@/src/components/ProtectedRoute";  
 import { auth } from "@/src/lib/firebase";  
 import Image from 'next/image';  
-import { useRouter } from 'next/navigation';
-import router from "next/router";
+import { useRouter } from 'next/navigation';  
 
 // Extender el tipo UserProfile para incluir los conteos  
 interface UserProfileWithStats extends UserProfile {  
@@ -116,9 +115,22 @@ function UsersPage() {
     }  
   };  
   
-  const handleViewUserActivity = (userId: string) => {  
-    router.push(`/community-admin/users/${userId}/activity`);  
-    };  
+    const [navigateTo, setNavigateTo] = useState<string | null>(null);  
+  
+    const router = useRouter();  
+
+
+    useEffect(() => {  
+    if (navigateTo && mounted) {  
+        router.push(navigateTo);  // This now uses the App Router  
+        setNavigateTo(null);  
+    }  
+    }, [navigateTo, mounted, router]); 
+    
+    const handleViewUserActivity = (userId: string) => {  
+    if (!mounted) return;  
+    setNavigateTo(`/community-admin/users/${userId}/activity`);  
+    };
   
   if (!mounted || loading) {  
     return (  
@@ -150,7 +162,7 @@ function UsersPage() {
             </p>  
           </div>  
           <Link  
-            href="/community-admin"  
+            href="/"  
             style={{  
               padding: '10px 20px',  
               borderRadius: '9999px',  
@@ -162,7 +174,7 @@ function UsersPage() {
               transition: 'all 0.2s'  
             }}  
           >  
-            ← Back to Admin  
+            ← Back to Console  
           </Link>  
         </div>  
   

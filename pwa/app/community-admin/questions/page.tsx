@@ -75,7 +75,7 @@ export default function QaPage() {
               transition: 'all 0.2s'      
             }}      
           >      
-            ← Inicio      
+            ← Back to Console      
           </Link>      
         </div>      
       </div>      
