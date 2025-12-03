@@ -1,28 +1,31 @@
-# No subir imágenes
-*.png
-*.jpg
-*.jpeg
-*.webp
-
-# No subir vídeos
-*.mp4
-*.mov
-
-# No subir archivos de Photoshop
-*.psd
-
-# Carpetas con contenido pesado (si las tienes)
-Imágenes para trabajar/
-our best photos/
-planting photos/
-Photoshop Files/
-*.png
-*.docx
-*.svg
-*.pdf
-/node_modules
-*.png
-/pwa/dist
-/pwa/.next
-/pwa/node_modules
+# No subir imágenes (excepto iconos PWA)  
+*.png  
+*.jpg  
+*.jpeg  
+*.webp  
+  
+# PERMITIR iconos de PWA  
+!pwa/public/icons/**/*.png  
+  
+# No subir vídeos  
+*.mp4  
+*.mov  
+  
+# No subir archivos de Photoshop  
+*.psd  
+  
+# Carpetas con contenido pesado  
+Imágenes para trabajar/  
+our best photos/  
+planting photos/  
+Photoshop Files/  
+*.docx  
+*.svg  
+*.pdf  
+  
+# Node y build artifacts  
+/node_modules  
+/pwa/dist  
+/pwa/.next  
+/pwa/node_modules  
 pwa/firebase-debug.log
