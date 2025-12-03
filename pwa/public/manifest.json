@@ -1,6 +1,6 @@
 {  
   "name": "Dirty Roots - Lugares Calmados",  
-  "short_name": "Dirty Roots",  
+  "short_name": "Dirty Roots",   
   "description": "Descubre y comparte lugares tranquilos. Comunidad de espacios calmados y preguntas sobre bienestar.",  
   "start_url": "/community/herbarium",  
   "display": "standalone",  
@@ -13,72 +13,22 @@
   "categories": ["lifestyle", "social", "travel"],  
   "icons": [  
     {  
-      "src": "/icons/android/android-launchericon-72-72.png",  
-      "sizes": "72x72",  
-      "type": "image/png",  
-      "purpose": "any"  
-    },  
-    {  
-      "src": "/icons/android/android-launchericon-192-192.png",  
-      "sizes": "192x192",  
-      "type": "image/png",  
-      "purpose": "any"  
-    },  
-    {  
       "src": "/icons/android/android-launchericon-512-512.png",  
       "sizes": "512x512",  
       "type": "image/png",  
       "purpose": "any"  
-    },  
-    {  
-      "src": "/icons/android/android-launchericon-192-192.png",  
-      "sizes": "192x192",  
-      "type": "image/png",  
-      "purpose": "maskable"  
-    },  
-    {  
-      "src": "/icons/android/android-launchericon-512-512.png",  
-      "sizes": "512x512",  
-      "type": "image/png",  
-      "purpose": "maskable"  
-    } 
+    }  
   ],  
   "shortcuts": [  
     {  
       "name": "Herbario",  
-      "short_name": "Herbario",  
+      "short_name": "Herbario",   
       "description": "Ver galería de plantas comunitaria",  
       "url": "/community/herbarium",  
       "icons": [  
         {  
-          "src": "/icons/android/android-launchericon-96-96.png",  
-          "sizes": "96x96",  
-          "type": "image/png"  
-        }  
-      ]  
-    },  
-    {  
-      "name": "Preguntas",  
-      "short_name": "Q&A",  
-      "description": "Comunidad de preguntas y respuestas",  
-      "url": "/community/questions",  
-      "icons": [  
-        {  
-          "src": "/icons/android/android-launchericon-96-96.png",  
-          "sizes": "96x96",  
-          "type": "image/png"  
-        }  
-      ]  
-    },  
-    {  
-      "name": "Perfil",  
-      "short_name": "Perfil",  
-      "description": "Mi perfil de usuario",  
-      "url": "/community/profile",  
-      "icons": [  
-        {  
-          "src": "/icons/android/android-launchericon-96-96.png",  
-          "sizes": "96x96",  
+          "src": "/icons/android/android-launchericon-512-512.png",  
+          "sizes": "512x512",  
           "type": "image/png"  
         }  
       ]  
