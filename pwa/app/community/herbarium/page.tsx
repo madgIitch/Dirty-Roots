@@ -1,4 +1,3 @@
-
 // pwa/app/qa/embed/herbarium/page.tsx      
 'use client';      
       
@@ -37,7 +36,7 @@ const plantPhotoSchema = z.object({
   description: z.string().min(10, 'La descripción debe tener al menos 10 caracteres'),      
   imageBase64: z.string().min(1, 'La imagen es requerida'),  
   category: z.enum(Object.keys(CATEGORIES) as [CategoryKey, ...CategoryKey[]]).optional()  
-});   
+});     
       
 type PlantPhotoFormValues = z.infer<typeof plantPhotoSchema>;      
       
@@ -287,7 +286,7 @@ function HerbariumPage() {
               fontSize: '14px'  
             }}  
           >  
-            <option value="all">All the categories</option>  
+            <option value="all">Todas las categorías</option>  
             {Object.entries(CATEGORIES).map(([key, value]) => (  
               <option key={key} value={key}>  
                 {value.emoji} {value.label}  
@@ -323,10 +322,10 @@ function HerbariumPage() {
           }}>      
             <div style={{ fontSize: '48px', marginBottom: '16px' }}>🌿</div>      
             <p style={{ marginBottom: '12px', fontSize: '18px', color: '#B6B9BF' }}>      
-              There&apos;s no posts yet.      
+              No hay fotos en el herbario aún.      
             </p>      
             <p style={{ fontSize: '14px', color: '#B6B9BF' }}>      
-              Be the first to share a photo of your plant.      
+              Sé el primero en compartir una foto de tu planta.      
             </p>      
           </div>      
         ) : (      
@@ -389,7 +388,22 @@ function HerbariumPage() {
                         >    
                           {photo.userName || 'Usuario'}    
                         </button>                  
-                      </p>        
+                      </p>  
+                      {photo.category && (  
+                        <div style={{  
+                          marginTop: '4px',  
+                          background: 'rgba(164, 203, 62, 0.2)',  
+                          border: '1px solid #A4CB3E',  
+                          borderRadius: '6px',  
+                          padding: '2px 8px',  
+                          display: 'inline-block'  
+                        }}>  
+                          <span style={{ fontSize: '12px', color: '#A4CB3E' }}>  
+                            {CATEGORIES[photo.category as CategoryKey]?.emoji} {CATEGORIES[photo.category as CategoryKey]?.label}  
+                          </span>  
+                        </div>  
+                      )}  
+                    </div>      
                   </div>      
       
                   <div style={{                     
@@ -409,8 +423,8 @@ function HerbariumPage() {
                     </div>      
       
                     <div style={{ borderTop: '1px solid #242424', paddingTop: '12px' }}>      
-                      <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}> 
-                         <button                   
+                      <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>      
+                          <button                   
                           onClick={() => photo.id && handleLike(photo.id)}                  
                           style={{                  
                             background: 'none',                  
@@ -436,23 +450,7 @@ function HerbariumPage() {
                         >                  
                           💬 {photo.comments?.length || 0}                  
                         </button>      
-                      </div>     
-
-                                            {photo.category && (  
-                        <div style={{  
-                          marginTop: '4px',  
-                          background: 'rgba(164, 203, 62, 0.2)',  
-                          border: '1px solid #A4CB3E',  
-                          borderRadius: '6px',  
-                          padding: '2px 8px',  
-                          display: 'inline-block'  
-                        }}>  
-                          <span style={{ fontSize: '12px', color: '#A4CB3E' }}>  
-                            {CATEGORIES[photo.category as CategoryKey]?.emoji} {CATEGORIES[photo.category as CategoryKey]?.label}  
-                          </span>  
-                        </div>  
-                      )}  
-                    </div> 
+                      </div>      
       
                       {photo.id && showComments[photo.id] && (      
                         <div style={{ marginTop: '12px' }}>      
@@ -556,7 +554,7 @@ function HerbariumPage() {
             }}>    
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>    
                 <h2 style={{ color: '#F5F5F5', fontSize: '20px', fontWeight: 'bold' }}>    
-                  Upload Plant Photo    
+                  Subir Foto de Planta    
                 </h2>    
                 <button    
                   onClick={() => {      
@@ -599,13 +597,13 @@ function HerbariumPage() {
                       color: '#F5F5F5',    
                       fontSize: '14px'    
                     }}    
-                    placeholder="Ej: Eucuteliptus"    
+                    placeholder="Ej: Monstera Deliciosa"    
                   />    
                 </div>    
     
                 <div>    
                   <label style={{ color: '#F5F5F5', fontSize: '14px', fontWeight: '600', marginBottom: '8px', display: 'block' }}>    
-                    Description    
+                    Descripción    
                   </label>    
                   <textarea    
                     {...register('description')}    
@@ -620,13 +618,13 @@ function HerbariumPage() {
                       fontSize: '14px',    
                       resize: 'vertical'    
                     }}    
-                    placeholder="Tell us about your plant..."    
+                    placeholder="Cuéntanos sobre tu planta..."    
                   />    
                 </div>    
   
                 <div>    
                   <label style={{ color: '#F5F5F5', fontSize: '14px', fontWeight: '600', marginBottom: '8px', display: 'block' }}>    
-                    Category    
+                    Categoría    
                   </label>    
                   <select    
                     {...register('category')}    
@@ -640,7 +638,7 @@ function HerbariumPage() {
                       fontSize: '14px'    
                     }}    
                   >    
-                    <option value="">Select a categroy (optional)</option>    
+                    <option value="">Selecciona una categoría (opcional)</option>    
                     {Object.entries(CATEGORIES).map(([key, value]) => (    
                       <option key={key} value={key}>    
                         {value.emoji} {value.label}    
@@ -700,7 +698,7 @@ function HerbariumPage() {
                     cursor: formState.isSubmitting ? 'not-allowed' : 'pointer'    
                   }}    
                 >    
-                  {formState.isSubmitting ? 'Uploading...' : 'Upload Photo'}    
+                  {formState.isSubmitting ? 'Subiendo...' : 'Subir Foto'}    
                 </button>    
               </form>    
             </div>    
