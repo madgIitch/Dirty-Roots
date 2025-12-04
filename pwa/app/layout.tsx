@@ -41,8 +41,10 @@ export default function RootLayout({
 }>) {  
   return (  
     <html lang="es">  
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>  
-        <ServiceWorkerRegister />  
+      <body   
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}  
+        style={{ margin: 0, padding: 0, border: 'none' }}  
+      >        <ServiceWorkerRegister />  
         {children}  
       </body>  
     </html>  
