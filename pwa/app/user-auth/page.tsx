@@ -8,7 +8,6 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';  
 import { auth } from '@/src/lib/firebase';  
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';  
-import { processInvitationRegistration } from '@/src/lib/firestore';  
   
 const userAuthSchema = z.object({  
   displayName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').optional().or(z.literal('')),  
@@ -30,7 +29,7 @@ export default function UserAuthPage() {
     const urlParams = new URLSearchParams(window.location.search);  
     const code = urlParams.get('invite');  
     console.log('🔍 [INVITATION] Checking URL for invite code...', { url: window.location.search, code });  
-      
+        
     if (code) {  
       console.log('✉️ [INVITATION] Invite code found:', code);  
       setInviteCode(code);  
@@ -46,9 +45,9 @@ export default function UserAuthPage() {
   const onSubmit = handleSubmit(async (values) => {  
     setError('');  
     setLoading(true);  
-      
+        
     console.log('🚀 [AUTH] Starting authentication...', { isLogin, hasInviteCode: !!inviteCode });  
-                
+                  
     try {  
       if (isLogin) {  
         console.log('🔑 [AUTH] Attempting sign in with email/password');  
@@ -58,20 +57,34 @@ export default function UserAuthPage() {
         console.log('👤 [AUTH] Creating new user account...');  
         const result = await createUserWithEmailAndPassword(auth, values.email, values.password);  
         console.log('✅ [AUTH] User created successfully:', { uid: result.user.uid, email: result.user.email });  
-          
+            
         console.log('📝 [AUTH] Updating user profile with displayName:', values.displayName);  
         await updateProfile(result.user, { displayName: values.displayName });  
         console.log('✅ [AUTH] Profile updated successfully');  
-            
+              
         // Si hay código de invitación, procesarlo  
         if (inviteCode) {  
-          console.log('🎯 [INVITATION] Processing invitation registration...', {   
-            inviteCode,   
-            registeredUid: result.user.uid   
+          console.log('🎯 [INVITATION] Processing invitation registration...', {     
+            inviteCode,     
+            registeredUid: result.user.uid     
           });  
-            
+              
           try {  
-            await processInvitationRegistration(inviteCode, result.user.uid);  
+            const response = await fetch('/api/invitations/process', {  
+              method: 'POST',  
+              headers: {  
+                'Content-Type': 'application/json',  
+              },  
+              body: JSON.stringify({  
+                inviteCode,  
+                registeredUid: result.user.uid,  
+              }),  
+            });  
+                
+            if (!response.ok) {  
+              throw new Error('Error procesando invitación');  
+            }  
+              
             console.log('✅ [INVITATION] Invitation processed successfully');  
           } catch (inviteError) {  
             console.error('❌ [INVITATION] Failed to process invitation:', inviteError);  
@@ -81,12 +94,12 @@ export default function UserAuthPage() {
           console.log('ℹ️ [INVITATION] No invitation code to process');  
         }  
       }  
-        
+          
       console.log('🏠 [NAV] Redirecting to /community/herbarium');  
       router.push('/community/herbarium');  
     } catch (error: unknown) {  
       console.error('❌ [ERROR] Authentication failed:', error);  
-        
+          
       if (error instanceof Error) {  
         console.error('❌ [ERROR] Error message:', error.message);  
         setError(error.message);  
