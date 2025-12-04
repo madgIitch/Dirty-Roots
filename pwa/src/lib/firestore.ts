@@ -233,7 +233,13 @@ export type UserProfile = {
   createdAt: Timestamp;  
   updatedAt?: Timestamp;
   postsCount?: number;  
-  commentsCount?: number;    
+  commentsCount?: number; 
+  challengeProgress?: {  
+    photoDates: string[]; // Array de fechas únicas (YYYY-MM-DD)  
+    invitedFriends: string[]; // Array de UIDs de amigos invitados  
+    discountEarned: boolean;  
+    discountCode?: string;  
+  };   
 };
 
 export interface Admin {  
@@ -1561,4 +1567,100 @@ export async function addAdminWithOwner(
     
   console.log('✅ Admin creado exitosamente');  
   return input.email;    
+}
+
+// Función auxiliar para generar códigos únicos  
+function generateUniqueCode(): string {  
+  return Math.random().toString(36).substring(2, 15) +   
+         Math.random().toString(36).substring(2, 15);  
+}
+
+//Función para ver la elegibilidad del descuento
+export async function checkDiscountEligibility(uid: string): Promise<void> {  
+  const profile = await getUserProfile(uid);  
+  if (!profile || !profile.challengeProgress || profile.challengeProgress.discountEarned) {  
+    return;  
+  }  
+  
+  const hasThreePhotoDates = profile.challengeProgress.photoDates.length >= 3;  
+  const hasThreeInvitedFriends = profile.challengeProgress.invitedFriends.length >= 1;  
+  
+  if (hasThreePhotoDates && hasThreeInvitedFriends) {  
+    const discountCode = generateUniqueCode();  
+    await updateUserProfile(uid, {  
+      challengeProgress: {  
+        ...profile.challengeProgress,  
+        discountEarned: true,  
+        discountCode  
+      }  
+    });  
+  }  
+}
+
+// Generar enlace de invitación único  
+export async function generateInviteLink(uid: string): Promise<string> {  
+  const code = generateUniqueCode(); // Función auxiliar  
+  const ref = doc(db, "invitations", code);  
+    
+  await setDoc(ref, {  
+    inviterUid: uid,  
+    createdAt: serverTimestamp(),  
+    used: false,  
+    registeredUid: null  
+  });  
+    
+  return `${window.location.origin}/user-auth?invite=${code}`;  
+}  
+  
+// Procesar registro cuando alguien usa una invitación  
+export async function processInvitationRegistration(  
+  inviteCode: string,   
+  registeredUid: string  
+): Promise<void> {  
+  const inviteRef = doc(db, "invitations", inviteCode);  
+  const inviteSnap = await getDoc(inviteRef);  
+    
+  if (!inviteSnap.exists() || inviteSnap.data()?.used) {  
+    throw new Error('Invitación inválida o ya usada');  
+  }  
+    
+  const inviterUid = inviteSnap.data()?.inviterUid;  
+    
+  // Marcar invitación como usada  
+  await updateDoc(inviteRef, {  
+    used: true,  
+    registeredUid: registeredUid,  
+    usedAt: serverTimestamp()  
+  });  
+    
+  // Actualizar progreso del inviter  
+  await addRegisteredFriend(inviterUid, registeredUid);  
+}  
+  
+// Agregar amigo registrado al progreso del challenge  
+export async function addRegisteredFriend(  
+  inviterUid: string,   
+  registeredUid: string  
+): Promise<void> {  
+  const profile = await getUserProfile(inviterUid);  
+  if (!profile) return;  
+    
+  const invitedFriends = profile.challengeProgress?.invitedFriends || [];  
+    
+  // Evitar duplicados  
+  if (!invitedFriends.includes(registeredUid)) {  
+    const newInvitedFriends = [...invitedFriends, registeredUid];  
+      
+    await updateUserProfile(inviterUid, {  
+      challengeProgress: {  
+        photoDates: profile.challengeProgress?.photoDates || [], // Asegurar array vacío  
+        invitedFriends: newInvitedFriends,  
+        discountEarned: profile.challengeProgress?.discountEarned || false,  
+        discountCode: profile.challengeProgress?.discountCode  
+      }  
+    });  
+      
+    // Verificar si cumple condiciones para descuento  
+    await checkDiscountEligibility(inviterUid);  
+  }  
 }
