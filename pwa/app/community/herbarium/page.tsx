@@ -322,10 +322,10 @@ function HerbariumPage() {
           }}>        
             <div style={{ fontSize: '48px', marginBottom: '16px' }}>🌿</div>        
             <p style={{ marginBottom: '12px', fontSize: '18px', color: '#B6B9BF' }}>        
-              No hay fotos en el herbario aún.        
+              There are no photos in the herbarium yet..        
             </p>        
             <p style={{ fontSize: '14px', color: '#B6B9BF' }}>        
-              Sé el primero en compartir una foto de tu planta.        
+              Be the first to share a photo of your plant.        
             </p>        
           </div>        
         ) : (        
@@ -555,7 +555,7 @@ function HerbariumPage() {
             }}>      
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>      
                 <h2 style={{ color: '#F5F5F5', fontSize: '20px', fontWeight: 'bold' }}>      
-                  Subir Foto de Planta      
+                  Upload Plant Photo      
                 </h2>      
                 <button      
                   onClick={() => {        
@@ -585,7 +585,7 @@ function HerbariumPage() {
               <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>      
                 <div>      
                   <label style={{ color: '#F5F5F5', fontSize: '14px', fontWeight: '600', marginBottom: '8px', display: 'block' }}>      
-                    Nombre de la Planta      
+                    Plant Name      
                   </label>      
                   <input      
                     {...register('plantName')}      
@@ -598,13 +598,13 @@ function HerbariumPage() {
                       color: '#F5F5F5',      
                       fontSize: '14px'      
                     }}      
-                    placeholder="Ej: Monstera Deliciosa"      
+                    placeholder="Ej: Eucutelyptus"      
                   />      
                 </div>      
       
                 <div>      
                   <label style={{ color: '#F5F5F5', fontSize: '14px', fontWeight: '600', marginBottom: '8px', display: 'block' }}>      
-                    Descripción      
+                    Description      
                   </label>      
                   <textarea      
                     {...register('description')}      
@@ -619,13 +619,13 @@ function HerbariumPage() {
                       fontSize: '14px',      
                       resize: 'vertical'      
                     }}      
-                    placeholder="Cuéntanos sobre tu planta..."      
+                    placeholder="Tell us about your plant..."      
                   />      
                 </div>      
     
                 <div>      
                   <label style={{ color: '#F5F5F5', fontSize: '14px', fontWeight: '600', marginBottom: '8px', display: 'block' }}>      
-                    Categoría      
+                    Category      
                   </label>      
                   <select      
                     {...register('category')}      
@@ -639,7 +639,7 @@ function HerbariumPage() {
                       fontSize: '14px'      
                     }}      
                   >      
-                    <option value="">Selecciona una categoría (opcional)</option>      
+                    <option value="">Select a category (optional)</option>      
                     {Object.entries(CATEGORIES).map(([key, value]) => (      
                       <option key={key} value={key}>      
                         {value.emoji} {value.label}      
@@ -650,7 +650,7 @@ function HerbariumPage() {
       
                 <div>      
                   <label style={{ color: '#F5F5F5', fontSize: '14px', fontWeight: '600', marginBottom: '8px', display: 'block' }}>      
-                    Foto      
+                    Photo      
                   </label>      
                   <input      
                     type="file"      
@@ -699,7 +699,7 @@ function HerbariumPage() {
                     cursor: formState.isSubmitting ? 'not-allowed' : 'pointer'      
                   }}      
                 >      
-                  {formState.isSubmitting ? 'Subiendo...' : 'Subir Foto'}      
+                  {formState.isSubmitting ? 'Uploading...' : 'Upload photo'}      
                 </button>      
               </form>      
             </div>      
