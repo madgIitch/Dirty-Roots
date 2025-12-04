@@ -245,7 +245,8 @@ function HerbariumPage() {
       padding: '24px',                    
       paddingBottom: '250px',                    
       scrollbarWidth: 'none',                    
-      msOverflowStyle: 'none'                    
+      msOverflowStyle: 'none',
+      border: 'none'                                
     }} className="herbarium-content">        
         
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>        
@@ -374,7 +375,7 @@ function HerbariumPage() {
                     }}>                    
                       <p style={{ margin: 0, fontSize: '14px', fontWeight: '600' }}>                    
                         <button      
-                          onClick={() => photo.createdBy && router.push(`/qa/embed/profile?uid=${photo.createdBy}`)}      
+                          onClick={() => photo.createdBy && router.push(`/community/profile?uid=${photo.createdBy}`)}      
                           style={{      
                             background: 'none',      
                             border: 'none',      
