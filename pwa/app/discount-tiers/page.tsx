@@ -5,10 +5,8 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';    
 import { z } from 'zod';    
 import { zodResolver } from '@hookform/resolvers/zod';    
-import { auth } from '@/src/lib/firebase';    
 import ProtectedRoute from '@/src/components/ProtectedRoute';    
 import { useRouter } from 'next/navigation';    
-import { Timestamp } from "firebase/firestore";    
 import {    
   listDiscountTiers,  
   addDiscountTier,  
@@ -106,7 +104,7 @@ function DiscountTiersPage() {
   
   const handleDeleteTier = async (tierId: string) => {  
   console.log('🗑️ [DISCOUNT-TIERS] Attempting to delete tier:', { tierId });  
-  if (!confirm('¿Estás seguro de que quieres eliminar este nivel de descuento?')) {  
+  if (!confirm('Are you sure you want to remove this discount level?')) {  
     console.log('❌ [DISCOUNT-TIERS] Delete cancelled by user');  
     return;  
   }  
@@ -115,10 +113,10 @@ function DiscountTiersPage() {
     await deleteDiscountTier(tierId); // ← Uncommented this line  
     console.log('✅ [DISCOUNT-TIERS] Tier deleted successfully:', { tierId });  
     setTiers(tiers.filter(t => t.id !== tierId));  
-    alert('✅ Nivel eliminado');  
+    alert('✅ Tier deleted');  
   } catch (error) {  
     console.error('❌ [DISCOUNT-TIERS] Error deleting tier:', error);  
-    alert('Error eliminando nivel');  
+    alert('Error deleting tier');  
   }  
 };
   
@@ -177,7 +175,7 @@ function DiscountTiersPage() {
             color: '#F5F5F5',  
             margin: 0  
           }}>  
-            🎯 Niveles de Descuento  
+            🎯 Discount Tiers  
           </h1>  
           <button  
             onClick={() => router.push('/')}  
@@ -194,7 +192,7 @@ function DiscountTiersPage() {
             onMouseEnter={(e) => e.currentTarget.style.borderColor = '#A4CB3E'}  
             onMouseLeave={(e) => e.currentTarget.style.borderColor = '#2A2A2A'}  
           >  
-            ← Volver  
+            ← Back  
           </button>  
         </div>  
   
@@ -210,7 +208,7 @@ function DiscountTiersPage() {
             color: '#F5F5F5',  
             margin: 0  
           }}>  
-            {editingTierId ? '✏️ Editar Nivel' : '➕ Crear Nuevo Nivel'}  
+            {editingTierId ? '✏️ Edit Tier' : '➕ Create New Tier'}  
           </h2>  
           {editingTierId && (  
             <button  
@@ -234,7 +232,7 @@ function DiscountTiersPage() {
                 e.currentTarget.style.color = '#FF60A8';  
               }}  
             >  
-              Cancelar  
+              Cancel  
             </button>  
           )}  
         </div>  
@@ -249,7 +247,7 @@ function DiscountTiersPage() {
               marginBottom: '8px',  
               color: '#F5F5F5'  
             }}>  
-              Nivel *  
+              Tier *  
             </label>  
             <input  
               type="number"  
@@ -290,7 +288,7 @@ function DiscountTiersPage() {
               marginBottom: '8px',  
               color: '#F5F5F5'  
             }}>  
-              Nombre del Nivel *  
+              Tier Name *  
             </label>  
             <input  
               {...register('name')}  
@@ -331,7 +329,7 @@ function DiscountTiersPage() {
                 marginBottom: '8px',  
                 color: '#F5F5F5'  
               }}>  
-                Amigos Requeridos *  
+                Friends Required *  
               </label>  
               <input  
                 type="number"  
@@ -371,7 +369,7 @@ function DiscountTiersPage() {
                 marginBottom: '8px',  
                 color: '#F5F5F5'  
               }}>  
-                Descuento (%) *  
+                Discount  (%) *  
               </label>  
               <input  
                 type="number"  
@@ -423,7 +421,7 @@ function DiscountTiersPage() {
                   height: '16px'  
                 }}  
               />  
-              Nivel Activo  
+              Active Tier  
             </label>  
           </div>  
   
@@ -436,7 +434,7 @@ function DiscountTiersPage() {
               marginBottom: '8px',  
               color: '#F5F5F5'  
             }}>  
-              Título para Usuario *  
+              User Title *  
             </label>  
             <input  
               {...register('title')}  
@@ -468,7 +466,7 @@ function DiscountTiersPage() {
           </div>  
           <div>  
             <label style={{ display: 'block', marginBottom: '8px', color: '#F5F5F5', fontSize: '14px' }}>  
-              Código de Descuento *  
+              Discount Code *  
             </label>  
             <input  
               {...register('discountCode')}  
@@ -484,7 +482,7 @@ function DiscountTiersPage() {
                 outline: 'none',  
                 transition: 'all 0.2s'  
               }}  
-              placeholder="VERANO20"  
+              placeholder="SUMMER20"  
             />  
           </div>
   
@@ -497,7 +495,7 @@ function DiscountTiersPage() {
               marginBottom: '8px',  
               color: '#F5F5F5'  
             }}>  
-              Descripción *  
+              Description *  
             </label>  
             <textarea  
               {...register('description')}  
@@ -515,7 +513,7 @@ function DiscountTiersPage() {
                 transition: 'all 0.2s',  
                 resize: 'vertical'  
               }}  
-              placeholder="Invita a 3 amigos y obtén 10% de descuento..."  
+              placeholder="Invite 3 friends and get a 10% discount..."  
               onFocus={(e) => e.currentTarget.style.borderColor = '#A4CB3E'}  
               onBlur={(e) => e.currentTarget.style.borderColor = '#2A2A2A'}  
             />  
@@ -539,7 +537,7 @@ function DiscountTiersPage() {
               marginBottom: '8px',  
               color: '#F5F5F5'  
             }}>  
-              Mensaje Corto *  
+              Short Message *  
             </label>  
             <input  
               {...register('shortMessage')}  
@@ -555,7 +553,7 @@ function DiscountTiersPage() {
                 outline: 'none',  
                 transition: 'all 0.2s'  
               }}
-               placeholder="3 amigos = 10% OFF"  
+               placeholder="3 friends = 10% OFF"  
               onFocus={(e) => e.currentTarget.style.borderColor = '#A4CB3E'}  
               onBlur={(e) => e.currentTarget.style.borderColor = '#2A2A2A'}  
             />  
@@ -579,7 +577,7 @@ function DiscountTiersPage() {
               marginBottom: '8px',  
               color: '#F5F5F5'  
             }}>  
-              Descripción Detallada  
+              Detailed Description  
             </label>  
             <textarea  
               {...register('longDescription')}  
@@ -597,7 +595,7 @@ function DiscountTiersPage() {
                 transition: 'all 0.2s',  
                 resize: 'vertical'  
               }}  
-              placeholder="Descripción completa para mostrar en el perfil del usuario..."  
+              placeholder="Full description to display on user profile..."  
               onFocus={(e) => e.currentTarget.style.borderColor = '#A4CB3E'}  
               onBlur={(e) => e.currentTarget.style.borderColor = '#2A2A2A'}  
             />  
@@ -622,7 +620,7 @@ function DiscountTiersPage() {
                   height: '16px'  
                 }}  
               />  
-              Nivel activo  
+              Active Tier  
             </label>  
           </div>  
   
@@ -656,7 +654,7 @@ function DiscountTiersPage() {
                   e.currentTarget.style.color = '#FF60A8';  
                 }}  
               >  
-                Cancelar  
+                Cancel  
               </button>  
             )}  
             <button  
@@ -674,7 +672,7 @@ function DiscountTiersPage() {
                 transition: 'all 0.2s'  
               }}  
             >  
-              {loading ? 'Guardando...' : (editingTierId ? 'Actualizar Nivel' : 'Crear Nivel')}  
+              {loading ? 'Saving...' : (editingTierId ? 'Upload Tier' : 'Create Tier')}  
             </button>  
           </div>  
         </form>  
@@ -693,7 +691,7 @@ function DiscountTiersPage() {
           color: '#F5F5F5',  
           marginBottom: '24px'  
         }}>  
-          📊 Niveles de Descuento Configurados  
+          📊 Configured Discount Tiers  
         </h2>  
   
         {loadingTiers ? (  
@@ -713,7 +711,7 @@ function DiscountTiersPage() {
           </div>  
         ) : tiers.length === 0 ? (  
           <p style={{ color: '#B6B9BF', textAlign: 'center' }}>  
-            No hay niveles configurados  
+            No Tiers saved  
           </p>  
         ) : (  
           <div style={{  
@@ -741,7 +739,7 @@ function DiscountTiersPage() {
                     fontSize: '12px',  
                     fontWeight: '600'  
                   }}>  
-                    Inactivo  
+                    Inactive  
                   </div>  
                 )}  
                   
@@ -751,7 +749,7 @@ function DiscountTiersPage() {
                   color: '#F5F5F5',  
                   marginBottom: '8px'  
                 }}>  
-                  Nivel {tier.level}: {tier.name}  
+                  Tier {tier.level}: {tier.name}  
                 </h3>  
                   
                 <p style={{  
@@ -760,7 +758,7 @@ function DiscountTiersPage() {
                   fontWeight: '600',  
                   marginBottom: '12px'  
                 }}>  
-                  {tier.friendsRequired} amigos = {tier.discountPercentage}% OFF  
+                  {tier.friendsRequired} friends = {tier.discountPercentage}% OFF  
                 </p>  
                   
                 <p style={{  
@@ -810,7 +808,7 @@ function DiscountTiersPage() {
                       e.currentTarget.style.color = '#A4CB3E';  
                     }}  
                   >  
-                    ✏️ Editar  
+                    ✏️ Edit  
                   </button>  
   
                   <button  
@@ -835,7 +833,7 @@ function DiscountTiersPage() {
                       e.currentTarget.style.color = '#FF60A8';  
                     }}  
                   >  
-                    🗑️ Eliminar  
+                    🗑️ Delete  
                   </button>  
                 </div>  
               </div>  
