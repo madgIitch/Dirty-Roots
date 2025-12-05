@@ -27,7 +27,9 @@ const discountTierSchema = z.object({
   title: z.string().min(2, 'El título es requerido'),  
   description: z.string().min(10, 'La descripción debe tener al menos 10 caracteres'),  
   shortMessage: z.string().min(5, 'El mensaje corto es requerido'),  
-  longDescription: z.string().optional()  
+  longDescription: z.string().optional(),
+  discountCode: z.string().min(1, 'El código de descuento es requerido')
+  
 });  
   
 type DiscountTierFormValues = z.infer<typeof discountTierSchema>;  
@@ -464,6 +466,27 @@ function DiscountTiersPage() {
               </p>  
             )}  
           </div>  
+          <div>  
+            <label style={{ display: 'block', marginBottom: '8px', color: '#F5F5F5', fontSize: '14px' }}>  
+              Código de Descuento *  
+            </label>  
+            <input  
+              {...register('discountCode')}  
+              style={{  
+                width: '100%',  
+                background: '#0B0B0B',  
+                border: '1px solid #2A2A2A',  
+                borderRadius: '12px',  
+                padding: '12px 16px',  
+                color: '#F5F5F5',  
+                fontSize: '14px',  
+                fontFamily: 'inherit',  
+                outline: 'none',  
+                transition: 'all 0.2s'  
+              }}  
+              placeholder="VERANO20"  
+            />  
+          </div>
   
           {/* Descripción */}  
           <div>  

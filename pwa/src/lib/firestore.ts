@@ -254,19 +254,16 @@ export interface Admin {
 
 export interface DiscountTier {  
   id: string;  
-  level: number;               
-  name: string;               
-  friendsRequired: number;     
-  discountPercentage: number;     
+  level: number;  
+  name: string;  
+  friendsRequired: number;  
+  discountPercentage: number;  
   active: boolean;  
-    
-  // Mensajes configurables  
   title: string;  
   description: string;  
   shortMessage: string;  
   longDescription?: string;  
-    
-  // Campos de timestamp (añadidos)  
+  discountCode: string;  // ← Nuevo campo para el código de descuento  
   createdAt: Timestamp;  
   updatedAt?: Timestamp;  
 }
