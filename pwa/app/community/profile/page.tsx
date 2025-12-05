@@ -10,18 +10,18 @@ import { auth } from '@/src/lib/firebase';
 import { signOut } from 'firebase/auth';    
 import { useRouter } from 'next/navigation';    
 import Link from 'next/link';    
-import {   
-  getUserProfile,   
-  updateUserProfile,   
-  createUserProfile,   
-  listPlantPhotos,   
-  PlantPhoto,   
-  generateInviteLink,  
+import {     
+  getUserProfile,     
+  updateUserProfile,     
+  createUserProfile,     
+  listPlantPhotos,     
+  PlantPhoto,     
+  generateInviteLink,    
   listDiscountTiers,  
-  addDiscountTier,
-  DiscountTier,
-  UserProfile     
-} from '@/src/lib/firestore';
+  checkDiscountEligibility,  // ← AÑADIR ESTA IMPORTACIÓN  
+  DiscountTier,  
+  UserProfile       
+} from '@/src/lib/firestore'; 
 
 const profileSchema = z.object({    
   displayName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),    
@@ -318,28 +318,52 @@ function ProfilePage() {
     
   const profileImageBase64 = watch('profileImageBase64');    
     
-  const loadProfile = useCallback(async () => {    
-    try {    
-      const user = auth.currentUser;    
-      if (!user) return;    
+  const loadProfile = useCallback(async () => {  
+  try {  
+    const user = auth.currentUser;  
+    if (!user) return;  
       
-      const profile = await getUserProfile(user.uid);    
-      if (profile) {    
-        reset({    
-          displayName: profile.displayName,    
-          bio: profile.bio || '',    
-          profileImageBase64: profile.profileImageBase64 || '',    
-        });    
-      }    
+    const profile = await getUserProfile(user.uid);  
+    if (profile) {  
+      reset({  
+        displayName: profile.displayName,  
+        bio: profile.bio || '',  
+        profileImageBase64: profile.profileImageBase64 || '',  
+      });  
+    }  
       
-      const plants = await listPlantPhotos(50);    
-      setUserPlants(plants.filter(p => p.createdBy === user.uid));    
-    } catch (error) {    
-      console.error('Error loading profile:', error);    
-    } finally {    
-      setLoading(false);    
-    }    
-  }, [reset]);    
+    const plants = await listPlantPhotos(50);  
+    const userPlants = plants.filter(p => p.createdBy === user.uid);  
+    setUserPlants(userPlants);  
+      
+    // NUEVO: Actualizar photoDates del challengeProgress  
+    const uniqueDates = [...new Set(  
+      userPlants.map(plant =>   
+        plant.createdAt.toDate().toISOString().split('T')[0] // YYYY-MM-DD  
+      )  
+    )];  
+      
+    // Actualizar perfil solo si las fechas han cambiado  
+    if (profile &&   
+        JSON.stringify(profile.challengeProgress?.photoDates || []) !==   
+        JSON.stringify(uniqueDates)) {  
+        
+      await updateUserProfile(user.uid, {  
+        challengeProgress: {  
+          photoDates: uniqueDates,  
+          invitedFriends: profile.challengeProgress?.invitedFriends || [],  
+          earnedDiscounts: profile.challengeProgress?.earnedDiscounts || {}  
+        }  
+      });  
+        
+      await checkDiscountEligibility(user.uid);  
+    }  
+  } catch (error) {  
+    console.error('Error loading profile:', error);  
+  } finally {  
+    setLoading(false);  
+  }  
+}, [reset]); 
       
   useEffect(() => {    
     loadProfile();    
