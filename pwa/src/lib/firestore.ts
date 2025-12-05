@@ -252,7 +252,7 @@ export interface Admin {
   createdAt: Timestamp;  
 } 
 
-interface DiscountTier {  
+export interface DiscountTier {  
   id: string;  
   level: number;               
   name: string;               

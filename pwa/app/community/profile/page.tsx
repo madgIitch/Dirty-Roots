@@ -4,14 +4,25 @@ import { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';    
 import { z } from 'zod';    
 import { zodResolver } from '@hookform/resolvers/zod';    
-import { getUserProfile, updateUserProfile, createUserProfile, listPlantPhotos, PlantPhoto, generateInviteLink } from '@/src/lib/firestore';    
 import UserProtectedRoute from '@/src/components/UserProtectedRoute';    
 import imageCompression from 'browser-image-compression';    
 import { auth } from '@/src/lib/firebase';    
 import { signOut } from 'firebase/auth';    
 import { useRouter } from 'next/navigation';    
 import Link from 'next/link';    
-    
+import {   
+  getUserProfile,   
+  updateUserProfile,   
+  createUserProfile,   
+  listPlantPhotos,   
+  PlantPhoto,   
+  generateInviteLink,  
+  listDiscountTiers,  
+  addDiscountTier,
+  DiscountTier,
+  UserProfile     
+} from '@/src/lib/firestore';
+
 const profileSchema = z.object({    
   displayName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),    
   bio: z.string().optional(),    
@@ -164,7 +175,7 @@ const InviteFriendsComponent = () => {
           </h4>  
           {discountTiers.map((tier) => {  
             const isAchieved = invitedCount >= tier.friendsRequired && photoCount >= 3;  
-            const hasCode = userProfile?.challengeProgress?.discountCodes?.[`level${tier.level}`];  
+            const hasCode = userProfile?.challengeProgress?.earnedDiscounts?.[`level${tier.level}`];  
               
             return (  
               <div  
