@@ -21,113 +21,277 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;    
     
 // Componente de invitación de amigos  
-const InviteFriendsComponent = () => {    
-  const [inviteLink, setInviteLink] = useState('');    
-  const [copied, setCopied] = useState(false);    
+const InviteFriendsComponent = () => {  
+  const [inviteLink, setInviteLink] = useState('');  
+  const [copied, setCopied] = useState(false);  
   const [generating, setGenerating] = useState(false);  
-    
-  const generateLink = async () => {    
+  const [discountTiers, setDiscountTiers] = useState<DiscountTier[]>([]);  
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);  
+  const [loadingTiers, setLoadingTiers] = useState(true);  
+  
+  // Cargar tiers y perfil del usuario  
+  useEffect(() => {  
+    const loadData = async () => {  
+      try {  
+        const user = auth.currentUser;  
+        if (user) {  
+          // Cargar tiers configurados  
+          const tiers = await listDiscountTiers();  
+          setDiscountTiers(tiers.filter(t => t.active));  
+            
+          // Cargar perfil del usuario  
+          const profile = await getUserProfile(user.uid);  
+          setUserProfile(profile);  
+        }  
+      } catch (error) {  
+        console.error('Error loading data:', error);  
+      } finally {  
+        setLoadingTiers(false);  
+      }  
+    };  
+      
+    loadData();  
+  }, []);  
+  
+  const generateLink = async () => {  
     setGenerating(true);  
     try {  
-      const user = auth.currentUser;    
-      if (user) {    
-        const link = await generateInviteLink(user.uid);    
-        setInviteLink(link);    
-      }    
+      const user = auth.currentUser;  
+      if (user) {  
+        const link = await generateInviteLink(user.uid);  
+        setInviteLink(link);  
+      }  
     } catch (error) {  
       console.error('Error generating invite link:', error);  
     } finally {  
       setGenerating(false);  
     }  
-  };    
-      
-  const copyToClipboard = () => {    
-    navigator.clipboard.writeText(inviteLink);    
-    setCopied(true);    
-    setTimeout(() => setCopied(false), 2000);    
-  };    
-      
-  return (    
-    <div style={{    
-      background: '#0F0F0F',    
-      border: '1px solid #2A2A2A',    
-      borderRadius: '12px',    
-      padding: '20px',    
-      marginTop: '32px'    
-    }}>    
-      <h3 style={{    
-        fontSize: '18px',    
-        fontWeight: 'bold',    
-        marginBottom: '16px',    
-        color: '#F5F5F5',    
-        display: 'flex',    
-        alignItems: 'center',    
-        gap: '8px'    
-      }}>    
-        🎉 Invita a tus amigos    
-      </h3>    
-      <p style={{    
-        color: '#B6B9BF',    
-        fontSize: '14px',    
-        marginBottom: '16px',    
-        lineHeight: '1.5'    
-      }}>    
-        Invita a 3 amigos y publica fotos en 3 días distintos para obtener un descuento especial en la tienda.  
-      </p>  
-      <button    
-        onClick={generateLink}    
+  };  
+  
+  const copyToClipboard = () => {  
+    navigator.clipboard.writeText(inviteLink);  
+    setCopied(true);  
+    setTimeout(() => setCopied(false), 2000);  
+  };  
+  
+  const invitedCount = userProfile?.challengeProgress?.invitedFriends?.length || 0;  
+  const photoCount = userProfile?.challengeProgress?.photoDates?.length || 0;  
+  
+  return (  
+    <div style={{  
+      background: '#0F0F0F',  
+      border: '1px solid #2A2A2A',  
+      borderRadius: '12px',  
+      padding: '20px',  
+      marginTop: '32px'  
+    }}>  
+      <h3 style={{  
+        fontSize: '18px',  
+        fontWeight: 'bold',  
+        marginBottom: '16px',  
+        color: '#F5F5F5',  
+        display: 'flex',  
+        alignItems: 'center',  
+        gap: '8px'  
+      }}>  
+        🎉 Invita a tus amigos y gana descuentos  
+      </h3>  
+  
+      {/* Mensaje principal dinámico */}  
+      {!loadingTiers && discountTiers.length > 0 && (  
+        <p style={{  
+          color: '#B6B9BF',  
+          fontSize: '14px',  
+          marginBottom: '16px',  
+          lineHeight: '1.5'  
+        }}>  
+          {discountTiers[0]?.description || 'Invita amigos y publica fotos para obtener descuentos especiales.'}  
+        </p>  
+      )}  
+  
+      {/* Progreso actual */}  
+      <div style={{  
+        background: '#0B0B0B',  
+        border: '1px solid #2A2A2A',  
+        borderRadius: '8px',  
+        padding: '12px',  
+        marginBottom: '16px'  
+      }}>  
+        <div style={{  
+          display: 'flex',  
+          justifyContent: 'space-between',  
+          marginBottom: '8px',  
+          fontSize: '12px',  
+          color: '#B6B9BF'  
+        }}>  
+          <span>👥 Amigos invitados: {invitedCount}</span>  
+          <span>📸 Fotos publicadas: {photoCount}/3 días</span>  
+        </div>  
+          
+        {/* Barra de progreso de fotos */}  
+        <div style={{  
+          fontSize: '11px',  
+          color: '#666',  
+          marginBottom: '4px'  
+        }}>  
+          Progreso de fotos: {Math.min(photoCount, 3)}/3 días distintos  
+        </div>  
+        <div style={{  
+          height: '4px',  
+          background: '#2A2A2A',  
+          borderRadius: '2px',  
+          overflow: 'hidden'  
+        }}>  
+          <div style={{  
+            height: '100%',  
+            width: `${Math.min((photoCount / 3) * 100, 100)}%`,  
+            background: photoCount >= 3 ? '#A4CB3E' : '#FF60A8',  
+            transition: 'width 0.3s ease'  
+          }} />  
+        </div>  
+      </div>  
+  
+      {/* Niveles de descuento */}  
+      {!loadingTiers && discountTiers.length > 0 && (  
+        <div style={{ marginBottom: '16px' }}>  
+          <h4 style={{  
+            fontSize: '14px',  
+            fontWeight: '600',  
+            color: '#F5F5F5',  
+            marginBottom: '12px'  
+          }}>  
+            🎁 Niveles de descuento disponibles:  
+          </h4>  
+          {discountTiers.map((tier) => {  
+            const isAchieved = invitedCount >= tier.friendsRequired && photoCount >= 3;  
+            const hasCode = userProfile?.challengeProgress?.discountCodes?.[`level${tier.level}`];  
+              
+            return (  
+              <div  
+                key={tier.id}  
+                style={{  
+                  background: isAchieved ? 'rgba(164, 203, 62, 0.1)' : 'rgba(255, 96, 168, 0.1)',  
+                  border: `1px solid ${isAchieved ? '#A4CB3E' : '#FF60A8'}`,  
+                  borderRadius: '8px',  
+                  padding: '12px',  
+                  marginBottom: '8px'  
+                }}  
+              >  
+                <div style={{  
+                  display: 'flex',  
+                  justifyContent: 'space-between',  
+                  alignItems: 'center',  
+                  marginBottom: '4px'  
+                }}>  
+                  <span style={{  
+                    fontSize: '13px',  
+                    fontWeight: '600',  
+                    color: isAchieved ? '#A4CB3E' : '#FF60A8'  
+                  }}>  
+                    {tier.title}  
+                  </span>  
+                  <span style={{  
+                    fontSize: '12px',  
+                    color: '#B6B9BF'  
+                  }}>  
+                    {tier.shortMessage}  
+                  </span>  
+                </div>  
+                  
+                {/* Barra de progreso para este nivel */}  
+                <div style={{  
+                  fontSize: '11px',  
+                  color: '#666',  
+                  marginBottom: '4px'  
+                }}>  
+                  Amigos: {Math.min(invitedCount, tier.friendsRequired)}/{tier.friendsRequired}  
+                </div>  
+                <div style={{  
+                  height: '3px',  
+                  background: '#2A2A2A',  
+                  borderRadius: '2px',  
+                  overflow: 'hidden',  
+                  marginBottom: '4px'  
+                }}>  
+                  <div style={{  
+                    height: '100%',  
+                    width: `${Math.min((invitedCount / tier.friendsRequired) * 100, 100)}%`,  
+                    background: isAchieved ? '#A4CB3E' : '#FF60A8',  
+                    transition: 'width 0.3s ease'  
+                  }} />  
+                </div>  
+  
+                {/* Mostrar código si está logrado */}  
+                {hasCode && (  
+                  <div style={{  
+                    fontSize: '11px',  
+                    color: '#A4CB3E',  
+                    fontWeight: '600'  
+                  }}>  
+                    ✅ Código obtenido: {hasCode}  
+                  </div>  
+                )}  
+              </div>  
+            );  
+          })}  
+        </div>  
+      )}  
+  
+      <button  
+        onClick={generateLink}  
         disabled={generating}  
-        style={{    
-          width: '100%',    
-          padding: '12px 20px',    
-          background: generating ? '#2A2A2A' : '#FF60A8',    
-          color: '#F5F5F5',    
-          border: 'none',    
-          borderRadius: '9999px',    
-          fontSize: '14px',    
-          fontWeight: '600',    
-          cursor: generating ? 'not-allowed' : 'pointer',    
-          marginBottom: '16px'    
-        }}    
-      >    
-        {generating ? 'Generando...' : 'Generar enlace de invitación'}    
-      </button>    
-      {inviteLink && (    
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>    
-          <input    
-            value={inviteLink}    
-            readOnly    
-            style={{    
-              flex: 1,    
-              background: '#0B0B0B',    
-              border: '1px solid #2A2A2A',    
-              borderRadius: '8px',    
-              padding: '10px 12px',    
-              color: '#B6B9BF',    
-              fontSize: '12px'    
-            }}    
-          />    
-          <button    
-            onClick={copyToClipboard}    
-            style={{    
-              padding: '10px 16px',    
-              background: copied ? '#A4CB3E' : '#2A2A2A',    
-              color: copied ? '#0B0B0B' : '#F5F5F5',    
-              border: 'none',    
-              borderRadius: '8px',    
-              fontSize: '12px',    
-              fontWeight: '600',    
-              cursor: 'pointer',    
-              whiteSpace: 'nowrap'    
-            }}    
-          >    
-            {copied ? '¡Copiado!' : 'Copiar'}    
-          </button>    
-        </div>    
-      )}    
-    </div>    
-  );    
-};    
+        style={{  
+          width: '100%',  
+          padding: '12px 20px',  
+          background: generating ? '#2A2A2A' : '#FF60A8',  
+          color: '#F5F5F5',  
+          border: 'none',  
+          borderRadius: '9999px',  
+          fontSize: '14px',  
+          fontWeight: '600',  
+          cursor: generating ? 'not-allowed' : 'pointer',  
+          marginBottom: '16px'  
+        }}  
+      >  
+        {generating ? 'Generando...' : 'Generar enlace de invitación'}  
+      </button>  
+  
+      {inviteLink && (  
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>  
+          <input  
+            value={inviteLink}  
+            readOnly  
+            style={{  
+              flex: 1,  
+              background: '#0B0B0B',  
+              border: '1px solid #2A2A2A',  
+              borderRadius: '8px',  
+              padding: '10px 12px',  
+              color: '#B6B9BF',  
+              fontSize: '12px'  
+            }}  
+          />  
+          <button  
+            onClick={copyToClipboard}  
+            style={{  
+              padding: '10px 16px',  
+              background: copied ? '#A4CB3E' : '#2A2A2A',  
+              color: copied ? '#0B0B0B' : '#F5F5F5',  
+              border: 'none',  
+              borderRadius: '8px',  
+              fontSize: '12px',  
+              fontWeight: '600',  
+              cursor: 'pointer',  
+              whiteSpace: 'nowrap'  
+            }}  
+          >  
+            {copied ? '¡Copiado!' : 'Copiar'}  
+          </button>  
+        </div>  
+      )}  
+    </div>  
+  );  
+};   
     
 function ProfilePage() {    
   const [loading, setLoading] = useState(true);    

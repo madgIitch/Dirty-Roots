@@ -237,8 +237,9 @@ export type UserProfile = {
   challengeProgress?: {  
     photoDates: string[]; // Array de fechas únicas (YYYY-MM-DD)  
     invitedFriends: string[]; // Array de UIDs de amigos invitados  
-    discountEarned: boolean;  
-    discountCode?: string;  
+    earnedDiscounts: {  
+      [tierId: string]: string; // ID del tier -> código de descuento  
+    };  
   };   
 };
 
@@ -250,6 +251,25 @@ export interface Admin {
   createdBy: string;  
   createdAt: Timestamp;  
 } 
+
+interface DiscountTier {  
+  id: string;  
+  level: number;               
+  name: string;               
+  friendsRequired: number;     
+  discountPercentage: number;     
+  active: boolean;  
+    
+  // Mensajes configurables  
+  title: string;  
+  description: string;  
+  shortMessage: string;  
+  longDescription: string;  
+    
+  // Campos de timestamp (añadidos)  
+  createdAt: Timestamp;  
+  updatedAt?: Timestamp;  
+}
 
 
 
@@ -1575,23 +1595,38 @@ function generateUniqueCode(): string {
          Math.random().toString(36).substring(2, 15);  
 }
 
+
+
 //Función para ver la elegibilidad del descuento
 export async function checkDiscountEligibility(uid: string): Promise<void> {  
   const profile = await getUserProfile(uid);  
-  if (!profile || !profile.challengeProgress || profile.challengeProgress.discountEarned) {  
-    return;  
+  if (!profile || !profile.challengeProgress) return;  
+    
+  const tiers = await listDiscountTiers();  
+  const invitedCount = profile.challengeProgress.invitedFriends.length;  
+  const photoCount = profile.challengeProgress.photoDates.length;  
+    
+  const hasBasicPhotos = photoCount >= 3;  
+  if (!hasBasicPhotos) return;  
+    
+  const updates: { [tierId: string]: string } = {};  
+    
+  for (const tier of tiers.filter(t => t.active)) {  
+    const hasCode = profile.challengeProgress.earnedDiscounts?.[tier.id];  
+      
+    if (!hasCode && invitedCount >= tier.friendsRequired) {  
+      updates[tier.id] = generateUniqueCode();  
+    }  
   }  
-  
-  const hasThreePhotoDates = profile.challengeProgress.photoDates.length >= 3;  
-  const hasThreeInvitedFriends = profile.challengeProgress.invitedFriends.length >= 1;  
-  
-  if (hasThreePhotoDates && hasThreeInvitedFriends) {  
-    const discountCode = generateUniqueCode();  
+    
+  if (Object.keys(updates).length > 0) {  
     await updateUserProfile(uid, {  
       challengeProgress: {  
         ...profile.challengeProgress,  
-        discountEarned: true,  
-        discountCode  
+        earnedDiscounts: {  
+          ...profile.challengeProgress.earnedDiscounts,  
+          ...updates  
+        }  
       }  
     });  
   }  
@@ -1664,30 +1699,59 @@ export async function processInvitationRegistration(
   
 // Agregar amigo registrado al progreso del challenge  
 export async function addRegisteredFriend(  
-  inviterUid: string,     
+  inviterUid: string,       
   registeredUid: string  
 ): Promise<void> {  
   const profile = await getUserProfile(inviterUid);  
   if (!profile) return;  
-    
+      
   const invitedFriends = profile.challengeProgress?.invitedFriends || [];  
-    
+      
   if (!invitedFriends.includes(registeredUid)) {  
     const newInvitedFriends = [...invitedFriends, registeredUid];  
-      
+        
     const updateData = {  
       challengeProgress: {  
         photoDates: profile.challengeProgress?.photoDates || [],  
         invitedFriends: newInvitedFriends,  
-        discountEarned: profile.challengeProgress?.discountEarned || false,  
-        discountCode: profile.challengeProgress?.discountCode  
+        earnedDiscounts: profile.challengeProgress?.earnedDiscounts || {}  
       }  
     };  
-      
+        
     console.log('🔧 [DEBUG] Updating profile with data:', updateData);  
     console.log('🔧 [DEBUG] Update keys:', Object.keys(updateData));  
-      
+        
     await updateUserProfile(inviterUid, updateData);  
     await checkDiscountEligibility(inviterUid);  
   }  
+}
+
+
+export async function addDiscountTier(tier: Omit<DiscountTier, 'id' | 'createdAt'>) {  
+  const ref = doc(collection(db, "discountTiers"));  
+  await setDoc(ref, {  
+    ...tier,  
+    createdAt: serverTimestamp()  
+  });  
+  return ref.id;  
+}  
+  
+export async function listDiscountTiers(): Promise<DiscountTier[]> {  
+  try {  
+    const ref = collection(db, "discountTiers");  
+    const q = query(ref, orderBy("level", "asc"));  
+    const snap = await getDocs(q);  
+    return snap.docs.map((d) => ({ id: d.id, ...(d.data() as DiscountTier) }));
+  } catch (error) {  
+    console.error("Error listing discount tiers:", error);  
+    throw new Error("Failed to load discount tiers");  
+  }  
+}
+  
+export async function updateDiscountTier(id: string, tier: Partial<DiscountTier>) {  
+  await updateDoc(doc(db, "discountTiers", id), tier);  
+}  
+  
+export async function deleteDiscountTier(id: string) {  
+  await deleteDoc(doc(db, "discountTiers", id));  
 }
