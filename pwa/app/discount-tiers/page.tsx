@@ -10,8 +10,12 @@ import ProtectedRoute from '@/src/components/ProtectedRoute';
 import { useRouter } from 'next/navigation';    
 import { Timestamp } from "firebase/firestore";    
 import {    
-  listDiscountTiers   
-} from '@/src/lib/firestore';    
+  listDiscountTiers,  
+  addDiscountTier,  
+  updateDiscountTier,  
+  deleteDiscountTier,  
+  DiscountTier    
+} from '@/src/lib/firestore';   
  
 // Schema para discount tiers  
 const discountTierSchema = z.object({  
@@ -28,20 +32,7 @@ const discountTierSchema = z.object({
   
 type DiscountTierFormValues = z.infer<typeof discountTierSchema>;  
   
-interface DiscountTier {  
-  id: string;  
-  level: number;  
-  name: string;  
-  friendsRequired: number;  
-  discountPercentage: number;  
-  active: boolean;  
-  title: string;  
-  description: string;  
-  shortMessage: string;  
-  longDescription?: string;  
-  createdAt: Timestamp;  // ← Changed from 'any'  
-  updatedAt?: Timestamp; // ← Changed from 'any'  
-}
+
   
 function DiscountTiersPage() {  
   const [loading, setLoading] = useState(false);  
@@ -112,67 +103,52 @@ function DiscountTiersPage() {
   };   
   
   const handleDeleteTier = async (tierId: string) => {  
-    console.log('🗑️ [DISCOUNT-TIERS] Attempting to delete tier:', { tierId });  
-    if (!confirm('¿Estás seguro de que quieres eliminar este nivel de descuento?')) {  
-      console.log('❌ [DISCOUNT-TIERS] Delete cancelled by user');  
-      return;  
-    }  
+  console.log('🗑️ [DISCOUNT-TIERS] Attempting to delete tier:', { tierId });  
+  if (!confirm('¿Estás seguro de que quieres eliminar este nivel de descuento?')) {  
+    console.log('❌ [DISCOUNT-TIERS] Delete cancelled by user');  
+    return;  
+  }  
   
-    try {  
-      // await deleteDiscountTier(tierId);  
-      console.log('✅ [DISCOUNT-TIERS] Tier deleted successfully (local only):', { tierId });  
-      setTiers(tiers.filter(t => t.id !== tierId));  
-      alert('✅ Nivel eliminado');  
-    } catch (error) {  
-      console.error('❌ [DISCOUNT-TIERS] Error deleting tier:', error);  
-      alert('Error eliminando nivel');  
-    }  
-  }; 
+  try {  
+    await deleteDiscountTier(tierId); // ← Uncommented this line  
+    console.log('✅ [DISCOUNT-TIERS] Tier deleted successfully:', { tierId });  
+    setTiers(tiers.filter(t => t.id !== tierId));  
+    alert('✅ Nivel eliminado');  
+  } catch (error) {  
+    console.error('❌ [DISCOUNT-TIERS] Error deleting tier:', error);  
+    alert('Error eliminando nivel');  
+  }  
+};
   
   const onSubmit = handleSubmit(async (values) => {  
-    console.log('📤 [DISCOUNT-TIERS] Form submitted:', {   
-      isEditing: !!editingTierId,   
-      values: { ...values, editingTierId }  
-    });  
-      
-    setError('');  
-    setLoading(true);  
-    setSuccess(false);  
+  setError('');  
+  setLoading(true);  
+  setSuccess(false);  
   
-    try {  
-      if (editingTierId) {  
-        console.log('🔄 [DISCOUNT-TIERS] Updating existing tier:', { editingTierId, values });  
-        // await updateDiscountTier(editingTierId, values);  
-        setTiers(tiers.map(t =>  
-          t.id === editingTierId  
-            ? { ...t, ...values, updatedAt: Timestamp.fromDate(new Date()) }  
-            : t  
-        ));  
-        console.log('✅ [DISCOUNT-TIERS] Tier updated successfully (local only)');  
-        setSuccess(true);  
-        setEditingTierId(null);  
-        reset();  
-      } else {  
-        console.log('➕ [DISCOUNT-TIERS] Creating new tier:', { values });  
-        // const newId = await addDiscountTier({ ...values, createdBy: uid });  
-        console.log('✅ [DISCOUNT-TIERS] Tier created successfully (local only)');  
-        setSuccess(true);  
-        reset();  
-        await loadAllTiers();  
-      }  
-  
-      setTimeout(() => {  
-        setSuccess(false);  
-      }, 2000);  
-    } catch (err: unknown) {  
-      const errorMessage = err instanceof Error ? err.message : 'Error guardando nivel';  
-      console.error('❌ [DISCOUNT-TIERS] Error in form submission:', { error: err, message: errorMessage });  
-      setError(errorMessage);  
-    } finally {  
-      setLoading(false);  
-      console.log('🏁 [DISCOUNT-TIERS] Form submission completed');  
+  try {  
+    if (editingTierId) {  
+      // Llamar a la función de actualización real  
+      await updateDiscountTier(editingTierId, values);  
+      console.log('✅ [DISCOUNT-TIERS] Tier updated successfully in backend');  
+    } else {  
+      // Llamar a la función de creación real  
+      const newId = await addDiscountTier(values);  
+      console.log('✅ [DISCOUNT-TIERS] Tier created successfully in backend with ID:', newId);  
     }  
-  });  
+      
+    setSuccess(true);  
+    reset();  
+    setEditingTierId(null);  
+      
+    // Recargar datos del backend  
+    await loadAllTiers();  
+  } catch (error) {  
+    console.error('❌ [DISCOUNT-TIERS] Backend operation failed:', error);  
+    setError('Failed to save tier. Please try again.');  
+  } finally {  
+    setLoading(false);  
+  }  
+});
   
   console.log('🎨 [DISCOUNT-TIERS] Rendering component state:', {  
     tiersCount: tiers.length,  

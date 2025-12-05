@@ -264,7 +264,7 @@ export interface DiscountTier {
   title: string;  
   description: string;  
   shortMessage: string;  
-  longDescription: string;  
+  longDescription?: string;  
     
   // Campos de timestamp (añadidos)  
   createdAt: Timestamp;  
