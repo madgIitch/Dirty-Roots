@@ -50,7 +50,10 @@ function DiscountTiersPage() {
   const [tiers, setTiers] = useState<DiscountTier[]>([]);  
   const [loadingTiers, setLoadingTiers] = useState(true);  
   const [editingTierId, setEditingTierId] = useState<string | null>(null);  
-  const router = useRouter();  
+  const router = useRouter(); 
+  
+  console.log('🎯 [DISCOUNT-TIERS] Component mounted');  
+
   
   const { register, handleSubmit, formState, setValue, reset } = useForm<DiscountTierFormValues>({  
     resolver: zodResolver(discountTierSchema),  
@@ -68,22 +71,26 @@ function DiscountTiersPage() {
   });  
   
   useEffect(() => {  
+    console.log('🔄 [DISCOUNT-TIERS] Loading tiers on component mount');  
     loadAllTiers();  
-  }, []);  
+  }, []);    
   
   async function loadAllTiers() {  
-      try {  
-          const data = await listDiscountTiers();  
-          // No conversion needed - data is already in correct Timestamp format  
-          setTiers(data);  
-        } catch (error) {  
-          console.error('Error loading tiers:');  
-        } finally {  
-          setLoadingTiers(false);  
-        }  
-    }   
+    console.log('📥 [DISCOUNT-TIERS] Starting to load all tiers');  
+    try {  
+      const data = await listDiscountTiers();  
+      console.log('✅ [DISCOUNT-TIERS] Tiers loaded successfully:', { count: data.length, tiers: data });  
+      setTiers(data);  
+    } catch (error) {  
+      console.error('❌ [DISCOUNT-TIERS] Error loading tiers:', error);  
+    } finally {  
+      setLoadingTiers(false);  
+      console.log('🏁 [DISCOUNT-TIERS] Loading tiers completed');  
+    }  
+  }   
       
   const handleEditTier = (tier: DiscountTier) => {  
+    console.log('✏️ [DISCOUNT-TIERS] Editing tier:', { id: tier.id, name: tier.name, level: tier.level });  
     setEditingTierId(tier.id || null);  
     setValue('level', tier.level);  
     setValue('name', tier.name);  
@@ -98,44 +105,57 @@ function DiscountTiersPage() {
   };  
   
   const handleCancelEdit = () => {  
+    console.log('🚫 [DISCOUNT-TIERS] Canceling edit mode');  
     setEditingTierId(null);  
     reset();  
     setError('');  
-  };  
+  };   
   
   const handleDeleteTier = async (tierId: string) => {  
+    console.log('🗑️ [DISCOUNT-TIERS] Attempting to delete tier:', { tierId });  
     if (!confirm('¿Estás seguro de que quieres eliminar este nivel de descuento?')) {  
+      console.log('❌ [DISCOUNT-TIERS] Delete cancelled by user');  
       return;  
     }  
   
     try {  
       // await deleteDiscountTier(tierId);  
+      console.log('✅ [DISCOUNT-TIERS] Tier deleted successfully (local only):', { tierId });  
       setTiers(tiers.filter(t => t.id !== tierId));  
       alert('✅ Nivel eliminado');  
     } catch (error) {  
-      console.error('Error deleting tier:', error);  
+      console.error('❌ [DISCOUNT-TIERS] Error deleting tier:', error);  
       alert('Error eliminando nivel');  
     }  
-  };  
+  }; 
   
   const onSubmit = handleSubmit(async (values) => {  
+    console.log('📤 [DISCOUNT-TIERS] Form submitted:', {   
+      isEditing: !!editingTierId,   
+      values: { ...values, editingTierId }  
+    });  
+      
     setError('');  
     setLoading(true);  
     setSuccess(false);  
   
-    try {    
+    try {  
       if (editingTierId) {  
+        console.log('🔄 [DISCOUNT-TIERS] Updating existing tier:', { editingTierId, values });  
         // await updateDiscountTier(editingTierId, values);  
-        setTiers(tiers.map(t =>     
-            t.id === editingTierId     
-                ? { ...t, ...values, updatedAt: Timestamp.fromDate(new Date()) }    
-                : t    
-            ));
+        setTiers(tiers.map(t =>  
+          t.id === editingTierId  
+            ? { ...t, ...values, updatedAt: Timestamp.fromDate(new Date()) }  
+            : t  
+        ));  
+        console.log('✅ [DISCOUNT-TIERS] Tier updated successfully (local only)');  
         setSuccess(true);  
         setEditingTierId(null);  
         reset();  
       } else {  
+        console.log('➕ [DISCOUNT-TIERS] Creating new tier:', { values });  
         // const newId = await addDiscountTier({ ...values, createdBy: uid });  
+        console.log('✅ [DISCOUNT-TIERS] Tier created successfully (local only)');  
         setSuccess(true);  
         reset();  
         await loadAllTiers();  
@@ -146,11 +166,22 @@ function DiscountTiersPage() {
       }, 2000);  
     } catch (err: unknown) {  
       const errorMessage = err instanceof Error ? err.message : 'Error guardando nivel';  
+      console.error('❌ [DISCOUNT-TIERS] Error in form submission:', { error: err, message: errorMessage });  
       setError(errorMessage);  
     } finally {  
       setLoading(false);  
+      console.log('🏁 [DISCOUNT-TIERS] Form submission completed');  
     }  
   });  
+  
+  console.log('🎨 [DISCOUNT-TIERS] Rendering component state:', {  
+    tiersCount: tiers.length,  
+    loading,  
+    loadingTiers,  
+    editingTierId,  
+    hasError: !!error,  
+    hasSuccess: success  
+  });   
   
   return (  
     <main style={{ minHeight: '100vh', background: '#0B0B0B', padding: '24px' }}>  
@@ -818,6 +849,7 @@ function DiscountTiersPage() {
 }  
   
 export default function ProtectedDiscountTiersPage() {  
+  console.log('🛡️ [DISCOUNT-TIERS] Protected route wrapper rendering');  
   return (  
     <ProtectedRoute>  
       <DiscountTiersPage />  
