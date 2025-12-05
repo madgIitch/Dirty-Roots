@@ -235,11 +235,9 @@ export type UserProfile = {
   postsCount?: number;  
   commentsCount?: number; 
   challengeProgress?: {  
-    photoDates: string[]; // Array de fechas únicas (YYYY-MM-DD)  
-    invitedFriends: string[]; // Array de UIDs de amigos invitados  
-    earnedDiscounts: {  
-      [tierId: string]: string; // ID del tier -> código de descuento  
-    };  
+    photoDates: string[];  
+    invitedFriends: string[];  
+    earnedDiscounts: { [tierId: string]: string }; // ← Objeto por niveles  
   };   
 };
 
@@ -1599,33 +1597,33 @@ export async function checkDiscountEligibility(uid: string): Promise<void> {
   const profile = await getUserProfile(uid);  
   if (!profile || !profile.challengeProgress) return;  
     
-  const tiers = await listDiscountTiers();  
-  const invitedCount = profile.challengeProgress.invitedFriends.length;  
   const photoCount = profile.challengeProgress.photoDates.length;  
+  const friendCount = profile.challengeProgress.invitedFriends.length;  
     
-  const hasBasicPhotos = photoCount >= 3;  
-  if (!hasBasicPhotos) return;  
-    
-  const updates: { [tierId: string]: string } = {};  
+  // Cargar tiers disponibles  
+  const tiers = await listDiscountTiers();  
+  const earnedDiscounts = profile.challengeProgress?.earnedDiscounts || {};  
     
   for (const tier of tiers.filter(t => t.active)) {  
-    const hasCode = profile.challengeProgress.earnedDiscounts?.[tier.id];  
+    const tierKey = `level${tier.level}`;  
       
-    if (!hasCode && invitedCount >= tier.friendsRequired) {  
-      updates[tier.id] = generateUniqueCode();  
-    }  
-  }  
-    
-  if (Object.keys(updates).length > 0) {  
-    await updateUserProfile(uid, {  
-      challengeProgress: {  
-        ...profile.challengeProgress,  
-        earnedDiscounts: {  
-          ...profile.challengeProgress.earnedDiscounts,  
-          ...updates  
+    // Si ya tiene el código para este nivel, saltar  
+    if (earnedDiscounts[tierKey]) continue;  
+      
+    // Verificar si cumple requisitos para este nivel  
+    if (photoCount >= 1 && friendCount >= tier.friendsRequired) {  
+      const discountCode = generateUniqueCode();  
+        
+      await updateUserProfile(uid, {  
+        challengeProgress: {  
+          ...profile.challengeProgress,  
+          earnedDiscounts: {  
+            ...earnedDiscounts,  
+            [tierKey]: discountCode  
+          }  
         }  
-      }  
-    });  
+      });  
+    }  
   }  
 }
 
