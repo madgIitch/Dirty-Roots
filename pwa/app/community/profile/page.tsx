@@ -136,7 +136,7 @@ const InviteFriendsComponent = () => {
           color: '#B6B9BF'  
         }}>  
           <span>👥 Friends invited: {invitedCount}</span>  
-          <span>📸 Posted photos: {photoCount}/3 días</span>  
+          <span>📸 Posted photos: {photoCount}/3 days</span>  
         </div>  
           
         {/* Barra de progreso de fotos */}  
@@ -274,7 +274,7 @@ const InviteFriendsComponent = () => {
           marginBottom: '16px'  
         }}  
       >  
-        {generating ? 'Generando...' : 'Generar enlace de invitación'}  
+        {generating ? 'Generating...' : 'Generate invitation link'}  
       </button>  
   
       {inviteLink && (  
