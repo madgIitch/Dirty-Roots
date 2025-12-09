@@ -266,7 +266,7 @@ export default function UserAuthPage() {
               cursor: 'pointer'  
             }}  
           >  
-            {isLogin ? 'Don&apos;t have an account? Sign up' : 'Do you already have an account? Log in'}  
+            {isLogin ? "Don't have an account? Sign up" : "Do you already have an account? Log in"}
           </button>  
         </form>  
       </div>  
