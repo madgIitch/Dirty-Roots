@@ -255,13 +255,14 @@ export interface DiscountTier {
   level: number;  
   name: string;  
   friendsRequired: number;  
+  photosRequired: number; // ← Nuevo campo  
   discountPercentage: number;  
   active: boolean;  
   title: string;  
   description: string;  
   shortMessage: string;  
   longDescription?: string;  
-  discountCode: string;  // ← Nuevo campo para el código de descuento  
+  discountCode: string;  
   createdAt: Timestamp;  
   updatedAt?: Timestamp;  
 }
@@ -1596,25 +1597,24 @@ function generateUniqueCode(): string {
 export async function checkDiscountEligibility(uid: string): Promise<void> {  
   const profile = await getUserProfile(uid);  
   if (!profile || !profile.challengeProgress) return;  
-    
+      
   const photoCount = profile.challengeProgress.photoDates.length;  
   const friendCount = profile.challengeProgress.invitedFriends.length;  
-    
+      
   // Cargar tiers disponibles  
   const tiers = await listDiscountTiers();  
   const earnedDiscounts = profile.challengeProgress?.earnedDiscounts || {};  
-    
+      
   for (const tier of tiers.filter(t => t.active)) {  
     const tierKey = `level${tier.level}`;  
-      
+        
     // Si ya tiene el código, saltar  
     if (earnedDiscounts[tierKey]) continue;  
-      
-    // Verificar requisitos (1 foto + amigos requeridos)  
-    if (photoCount >= 1 && friendCount >= tier.friendsRequired) {  
-      // USAR EL CÓDIGO PREDEFINIDO DEL TIER  
-      const discountCode = tier.discountCode;  
         
+    // Verificar requisitos (fotos requeridas + amigos requeridos)  
+    if (photoCount >= tier.photosRequired && friendCount >= tier.friendsRequired) {  
+      const discountCode = tier.discountCode;  
+          
       await updateUserProfile(uid, {  
         challengeProgress: {  
           ...profile.challengeProgress,  
@@ -1624,11 +1624,13 @@ export async function checkDiscountEligibility(uid: string): Promise<void> {
           }  
         }  
       });  
-        
+          
       console.log(`✅ [DISCOUNT] Level ${tier.level} discount assigned: ${discountCode}`);  
     }  
   }  
 }
+
+
 // Generar enlace de invitación único  
 export async function generateInviteLink(uid: string): Promise<string> {  
   console.log('🔗 [INVITE] Generating invite link for UID:', uid);  

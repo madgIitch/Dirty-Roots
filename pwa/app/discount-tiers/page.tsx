@@ -20,15 +20,15 @@ const discountTierSchema = z.object({
   level: z.number().min(1, 'The level must be at least 1'),  
   name: z.string().min(2, 'The name must be at least 2 characters long'),  
   friendsRequired: z.number().min(1, 'At least 1 friend is required'),  
+  photosRequired: z.number().min(1, 'At least 1 photo is required'), // ← Nuevo campo  
   discountPercentage: z.number().min(1, 'The discount must be at least 1%.').max(100, 'Máximo 100%'),  
   active: z.boolean(),  
   title: z.string().min(2, 'The title is required'),  
   description: z.string().min(10, 'The description must be at least 10 characters long.'),  
   shortMessage: z.string().min(5, 'A short message is required.'),  
-  longDescription: z.string().optional(),
-  discountCode: z.string().min(1, 'A discount code is required')
-  
-});  
+  longDescription: z.string().optional(),  
+  discountCode: z.string().min(1, 'A discount code is required')  
+});
   
 type DiscountTierFormValues = z.infer<typeof discountTierSchema>;  
   
@@ -52,16 +52,16 @@ function DiscountTiersPage() {
       level: 1,  
       name: '',  
       friendsRequired: 1,  
+      photosRequired: 3, // ← Valor por defecto  
       discountPercentage: 10,  
       active: true,  
       title: '',  
       description: '',  
       shortMessage: '',  
-      longDescription: '',
-      discountCode: ''
-  
+      longDescription: '',  
+      discountCode: ''  
     }  
-  });  
+  }); 
   
   useEffect(() => {  
     console.log('🔄 [DISCOUNT-TIERS] Loading tiers on component mount');  
@@ -82,20 +82,20 @@ function DiscountTiersPage() {
     }  
   }   
       
-  const handleEditTier = (tier: DiscountTier) => {    
-    console.log('✏️ [DISCOUNT-TIERS] Editing tier:', { id: tier.id, name: tier.name, level: tier.level });    
-    setEditingTierId(tier.id || null);    
-    setValue('level', tier.level);    
-    setValue('name', tier.name);    
-    setValue('friendsRequired', tier.friendsRequired);    
-    setValue('discountPercentage', tier.discountPercentage);    
-    setValue('active', tier.active);    
-    setValue('title', tier.title);    
-    setValue('description', tier.description);    
-    setValue('shortMessage', tier.shortMessage);    
-    setValue('longDescription', tier.longDescription || '');    
-    setValue('discountCode', tier.discountCode); 
-    window.scrollTo({ top: 0, behavior: 'smooth' });    
+  const handleEditTier = (tier: DiscountTier) => {  
+    setEditingTierId(tier.id || null);  
+    setValue('level', tier.level);  
+    setValue('name', tier.name);  
+    setValue('friendsRequired', tier.friendsRequired);  
+    setValue('photosRequired', tier.photosRequired); // ← Agregar esta línea  
+    setValue('discountPercentage', tier.discountPercentage);  
+    setValue('active', tier.active);  
+    setValue('title', tier.title);  
+    setValue('description', tier.description);  
+    setValue('shortMessage', tier.shortMessage);  
+    setValue('longDescription', tier.longDescription || '');  
+    setValue('discountCode', tier.discountCode);  
+    window.scrollTo({ top: 0, behavior: 'smooth' });  
   };
   
   const handleCancelEdit = () => {  
@@ -365,6 +365,34 @@ function DiscountTiersPage() {
               )}  
             </div>  
   
+            <div style={{ flex: 1 }}>  
+              <label style={{  
+                display: 'block',  
+                fontSize: '14px',  
+                fontWeight: '600',  
+                marginBottom: '8px',  
+                color: '#F5F5F5'  
+              }}>  
+                Photos Required *  
+              </label>  
+              <input  
+                type="number"  
+                {...register('photosRequired', { valueAsNumber: true })}  
+                style={{  
+                  width: '100%',  
+                  background: '#0B0B0B',  
+                  border: '1px solid #2A2A2A',  
+                  borderRadius: '12px',  
+                  padding: '12px 16px',  
+                  color: '#F5F5F5',  
+                  fontSize: '14px',  
+                  fontFamily: 'inherit',  
+                  outline: 'none',  
+                  transition: 'all 0.2s'  
+                }}  
+                placeholder="1, 3, 5..."  
+              />  
+            </div>  
             <div style={{ flex: 1 }}>  
               <label style={{  
                 display: 'block',  

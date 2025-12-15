@@ -128,38 +128,38 @@ const InviteFriendsComponent = () => {
         padding: '12px',  
         marginBottom: '16px'  
       }}>  
-        <div style={{  
-          display: 'flex',  
-          justifyContent: 'space-between',  
-          marginBottom: '8px',  
-          fontSize: '12px',  
-          color: '#B6B9BF'  
-        }}>  
+        <div style={{    
+          display: 'flex',    
+          justifyContent: 'space-between',    
+          marginBottom: '8px',    
+          fontSize: '12px',    
+          color: '#B6B9BF'    
+        }}>    
           <span>👥 Friends invited: {invitedCount}</span>  
-          <span>📸 Posted photos: {photoCount}/3 days</span>  
+          <span>📸 Posted photos: {photoCount}/{discountTiers[0]?.photosRequired || 3} days</span>  
         </div>  
           
         {/* Barra de progreso de fotos */}  
-        <div style={{  
-          fontSize: '11px',  
-          color: '#666',  
-          marginBottom: '4px'  
-        }}>  
-          Photo progress: {Math.min(photoCount, 3)}/3 diferent days  
+        <div style={{    
+          fontSize: '11px',    
+          color: '#666',    
+          marginBottom: '4px'    
+        }}>    
+          Photo progress: {Math.min(photoCount, discountTiers[0]?.photosRequired || 3)}/{discountTiers[0]?.photosRequired || 3} different days  
         </div>  
-        <div style={{  
-          height: '4px',  
-          background: '#2A2A2A',  
-          borderRadius: '2px',  
-          overflow: 'hidden'  
-        }}>  
-          <div style={{  
-            height: '100%',  
-            width: `${Math.min((photoCount / 3) * 100, 100)}%`,  
-            background: photoCount >= 3 ? '#A4CB3E' : '#FF60A8',  
-            transition: 'width 0.3s ease'  
+        <div style={{    
+          height: '4px',    
+          background: '#2A2A2A',    
+          borderRadius: '2px',    
+          overflow: 'hidden'    
+        }}>    
+          <div style={{    
+            height: '100%',    
+            width: `${Math.min((photoCount / (discountTiers[0]?.photosRequired || 3)) * 100, 100)}%`,    
+            background: photoCount >= (discountTiers[0]?.photosRequired || 3) ? '#A4CB3E' : '#FF60A8',    
+            transition: 'width 0.3s ease'    
           }} />  
-        </div>  
+        </div>
       </div>  
   
       {/* Niveles de descuento */}  
@@ -174,7 +174,7 @@ const InviteFriendsComponent = () => {
             🎁 Available discount levels:  
           </h4>  
           {discountTiers.map((tier) => {  
-            const isAchieved = invitedCount >= tier.friendsRequired && photoCount >= 1;  
+            const isAchieved = invitedCount >= tier.friendsRequired && photoCount >= tier.photosRequired;
             const hasCode = userProfile?.challengeProgress?.earnedDiscounts?.[`level${tier.level}`];  
               
             console.log(`🎯 [TIER] Level ${tier.level}:`, {  
@@ -220,25 +220,46 @@ const InviteFriendsComponent = () => {
                 </div>  
                   
                 {/* Barra de progreso para este nivel */}  
-                <div style={{  
-                  fontSize: '11px',  
-                  color: '#666',  
-                  marginBottom: '4px'  
-                }}>  
+                <div style={{    
+                  fontSize: '11px',    
+                  color: '#666',    
+                  marginBottom: '4px'    
+                }}>    
                   Friends: {Math.min(invitedCount, tier.friendsRequired)}/{tier.friendsRequired}  
                 </div>  
-                <div style={{  
-                  height: '3px',  
-                  background: '#2A2A2A',  
-                  borderRadius: '2px',  
-                  overflow: 'hidden',  
-                  marginBottom: '4px'  
-                }}>  
-                  <div style={{  
-                    height: '100%',  
-                    width: `${Math.min((invitedCount / tier.friendsRequired) * 100, 100)}%`,  
-                    background: isAchieved ? '#A4CB3E' : '#FF60A8',  
-                    transition: 'width 0.3s ease'  
+                <div style={{    
+                  fontSize: '11px',    
+                  color: '#666',    
+                  marginBottom: '4px'    
+                }}>    
+                  Photos: {Math.min(photoCount, tier.photosRequired)}/{tier.photosRequired}  
+                </div>  
+                <div style={{    
+                  height: '3px',    
+                  background: '#2A2A2A',    
+                  borderRadius: '2px',    
+                  overflow: 'hidden',    
+                  marginBottom: '4px'    
+                }}>    
+                  <div style={{    
+                    height: '100%',    
+                    width: `${Math.min((invitedCount / tier.friendsRequired) * 100, 100)}%`,    
+                    background: isAchieved ? '#A4CB3E' : '#FF60A8',    
+                    transition: 'width 0.3s ease'    
+                  }} />  
+                </div>  
+                <div style={{    
+                  height: '3px',    
+                  background: '#2A2A2A',    
+                  borderRadius: '2px',    
+                  overflow: 'hidden',    
+                  marginBottom: '4px'    
+                }}>    
+                  <div style={{    
+                    height: '100%',    
+                    width: `${Math.min((photoCount / tier.photosRequired) * 100, 100)}%`,    
+                    background: photoCount >= tier.photosRequired ? '#A4CB3E' : '#FF60A8',    
+                    transition: 'width 0.3s ease'    
                   }} />  
                 </div>  
   
